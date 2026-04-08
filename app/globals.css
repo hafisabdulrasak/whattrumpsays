@@ -4,34 +4,115 @@
 
 :root {
   color-scheme: dark;
+  --bg: #0b0c10;
+  --bg-muted: #14161d;
+  --surface: #171a22;
+  --surface-elevated: #1f2430;
+  --text-primary: #f5f0e4;
+  --text-secondary: #d4cbb8;
+  --text-muted: #a8a098;
+  --accent: #c5a66a;
+  --accent-soft: #2f281a;
+  --border: #323847;
+  --border-strong: #5c667d;
+  --success: #1f9d72;
+  --warning: #d29b3b;
+  --error: #bb4b4f;
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.35);
+  --shadow-gold: 0 0 0 1px rgba(197, 166, 106, 0.45), 0 20px 55px rgba(0, 0, 0, 0.45);
+  --hero-overlay: radial-gradient(ellipse at top, rgba(197, 166, 106, 0.21), transparent 62%);
+}
+
+html.light {
+  color-scheme: light;
+  --bg: #f2eee4;
+  --bg-muted: #ebe5d8;
+  --surface: #f8f4ea;
+  --surface-elevated: #fefcf5;
+  --text-primary: #1d1a17;
+  --text-secondary: #3e3830;
+  --text-muted: #6e665c;
+  --accent: #9e7a3f;
+  --accent-soft: #efe3c8;
+  --border: #dbd2bf;
+  --border-strong: #c0b193;
+  --success: #1f8a67;
+  --warning: #aa7622;
+  --error: #9f3f42;
+  --shadow-soft: 0 16px 32px rgba(69, 55, 27, 0.12);
+  --shadow-gold: 0 0 0 1px rgba(158, 122, 63, 0.35), 0 12px 40px rgba(69, 55, 27, 0.14);
+  --hero-overlay: radial-gradient(ellipse at top, rgba(158, 122, 63, 0.2), transparent 60%);
 }
 
 html,
 body {
-  background: #0a0d14;
-  color: #f4f2ea;
+  background: var(--bg);
+  color: var(--text-primary);
 }
 
 body {
   min-height: 100vh;
   font-feature-settings: "ss01" on, "cv01" on;
+  transition: background-color 240ms ease, color 240ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2b3240 #0a0d14;
+  scrollbar-color: var(--border-strong) var(--bg);
 }
 
 ::selection {
-  background: rgba(184, 156, 92, 0.28);
+  background: rgba(197, 166, 106, 0.34);
 }
 
 @layer components {
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)];
   }
 
   .glass-panel {
-    @apply border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.03] backdrop-blur;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, color-mix(in oklab, var(--surface) 90%, transparent), color-mix(in oklab, var(--surface-elevated) 84%, transparent));
+    backdrop-filter: blur(8px);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .card-surface {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .button-gold {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .button-gold:hover {
+    filter: brightness(1.08);
+  }
+
+  .meta-pill {
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--surface-elevated) 88%, transparent);
+    color: var(--text-secondary);
   }
 }
