@@ -16,7 +16,7 @@ export function BackToTopButton() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="focus-ring fixed bottom-6 right-6 z-50 rounded-full border border-gold/40 bg-obsidian/90 px-4 py-2 text-xs font-semibold text-gold shadow-glow"
+      className="focus-ring fixed bottom-6 right-6 z-50 rounded-full border border-[var(--border-strong)] bg-[color-mix(in_oklab,var(--bg)_90%,transparent)] px-4 py-2 text-xs font-semibold text-[var(--accent)] shadow-[var(--shadow-gold)]"
     >
       Back to top
     </button>

@@ -6,12 +6,12 @@ export function FiltersBar() {
   const { q, source, start, end, quick, setQuery, resetDates } = useTimelineStore();
 
   return (
-    <section className="glass-panel rounded-xl p-4 shadow-panel">
+    <section className="glass-panel rounded-2xl p-5 shadow-[var(--shadow-soft)]">
       <div className="grid gap-3 md:grid-cols-5">
         <label className="md:col-span-2">
-          <span className="mb-1 block text-xs uppercase tracking-wider text-parchment/70">Search</span>
+          <span className="mb-1 block text-xs uppercase tracking-wider text-muted">Search</span>
           <input
-            className="focus-ring w-full rounded bg-navy px-3 py-2 text-sm"
+            className="focus-ring w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]"
             value={q}
             onChange={(e) => setQuery({ q: e.target.value })}
             placeholder="Search post text"
@@ -20,9 +20,9 @@ export function FiltersBar() {
         </label>
 
         <label>
-          <span className="mb-1 block text-xs uppercase tracking-wider text-parchment/70">Source</span>
+          <span className="mb-1 block text-xs uppercase tracking-wider text-muted">Source</span>
           <select
-            className="focus-ring w-full rounded bg-navy px-3 py-2 text-sm"
+            className="focus-ring w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]"
             value={source}
             onChange={(e) => setQuery({ source: e.target.value as "all" | "truth_social" | "twitter_archive" })}
             aria-label="Filter source"
@@ -34,13 +34,13 @@ export function FiltersBar() {
         </label>
 
         <label>
-          <span className="mb-1 block text-xs uppercase tracking-wider text-parchment/70">From</span>
-          <input className="focus-ring w-full rounded bg-navy px-3 py-2 text-sm" type="date" value={start ?? ""} onChange={(e) => setQuery({ start: e.target.value || undefined, quick: undefined })} />
+          <span className="mb-1 block text-xs uppercase tracking-wider text-muted">From</span>
+          <input className="focus-ring w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]" type="date" value={start ?? ""} onChange={(e) => setQuery({ start: e.target.value || undefined, quick: undefined })} />
         </label>
 
         <label>
-          <span className="mb-1 block text-xs uppercase tracking-wider text-parchment/70">To</span>
-          <input className="focus-ring w-full rounded bg-navy px-3 py-2 text-sm" type="date" value={end ?? ""} onChange={(e) => setQuery({ end: e.target.value || undefined, quick: undefined })} />
+          <span className="mb-1 block text-xs uppercase tracking-wider text-muted">To</span>
+          <input className="focus-ring w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]" type="date" value={end ?? ""} onChange={(e) => setQuery({ end: e.target.value || undefined, quick: undefined })} />
         </label>
       </div>
 
@@ -53,13 +53,13 @@ export function FiltersBar() {
         ].map(([value, label]) => (
           <button
             key={value}
-            className={`focus-ring rounded-full border px-3 py-1 text-xs transition ${quick === value ? "border-gold bg-gold/20 text-parchment" : "border-white/15 text-parchment/70 hover:border-white/40"}`}
+            className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-medium transition ${quick === value ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text-primary)]" : "border-[var(--border)] text-muted hover:border-[var(--border-strong)]"}`}
             onClick={() => setQuery({ quick: value as "today" | "week" | "month" | "archive", start: undefined, end: undefined })}
           >
             {label}
           </button>
         ))}
-        <button className="focus-ring rounded-full border border-white/20 px-3 py-1 text-xs text-parchment/70" onClick={resetDates}>
+        <button className="focus-ring rounded-full border border-[var(--border)] px-3 py-1.5 text-xs text-muted hover:border-[var(--border-strong)]" onClick={resetDates}>
           Clear dates
         </button>
       </div>

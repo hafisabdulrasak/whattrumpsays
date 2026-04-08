@@ -10,17 +10,17 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
   return (
     <aside className="space-y-4">
       <section className="glass-panel rounded-xl p-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gold">Volume Meter</h3>
-        <p className="mt-2 text-3xl font-black text-parchment">{todaysPosts.length}</p>
-        <p className="text-xs text-parchment/70">posts detected today</p>
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">Volume Meter</h3>
+        <p className="mt-2 text-3xl font-black text-[var(--text-primary)]">{todaysPosts.length}</p>
+        <p className="text-xs text-muted">posts detected today</p>
       </section>
       <section className="glass-panel rounded-xl p-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gold">Longest Post Today</h3>
-        <p className="mt-2 line-clamp-4 text-sm text-parchment/85">{longestToday?.text ?? "No posts available in current feed window."}</p>
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">Longest Post Today</h3>
+        <p className="mt-2 line-clamp-4 text-sm text-secondary">{longestToday?.text ?? "No posts available in current feed window."}</p>
       </section>
       <section className="glass-panel rounded-xl p-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gold">On This Day</h3>
-        <ul className="mt-2 space-y-2 text-xs text-parchment/80">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">On This Day</h3>
+        <ul className="mt-2 space-y-2 text-xs text-secondary">
           {onThisDay.length ? onThisDay.map((p) => <li key={p.id}>• {p.text.slice(0, 90)}...</li>) : <li>Archive entries for this date will appear here.</li>}
         </ul>
       </section>

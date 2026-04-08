@@ -18,6 +18,7 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
   const [nextCursor, setNextCursor] = useState<string | null>(initial.nextCursor);
   const [loading, setLoading] = useState(false);
   const [statuses, setStatuses] = useState(initial.sourceStatuses);
+  const [offline, setOffline] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const { q, source, start, end, quick } = useTimelineStore();
 
@@ -59,6 +60,17 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
   }, [load]);
 
   useEffect(() => {
+    const updateStatus = () => setOffline(!navigator.onLine);
+    updateStatus();
+    window.addEventListener("online", updateStatus);
+    window.addEventListener("offline", updateStatus);
+    return () => {
+      window.removeEventListener("online", updateStatus);
+      window.removeEventListener("offline", updateStatus);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!sentinelRef.current || !nextCursor) return;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -75,10 +87,15 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
 
   return (
     <div className="space-y-4">
-      <div className="glass-panel rounded-xl p-3 text-xs text-parchment/70">
+      {offline && (
+        <div className="rounded-xl border border-[var(--warning)]/60 bg-[var(--accent-soft)] px-4 py-2 text-xs text-secondary">
+          You are offline. Cached pages are available, but live timeline updates require reconnecting.
+        </div>
+      )}
+      <div className="glass-panel rounded-xl p-3 text-xs text-muted">
         {statuses.map((status) => (
           <p key={status.source}>
-            <span className="font-semibold text-parchment">{status.source}</span>: {status.available ? "Available" : "Unavailable"} — {status.detail}
+            <span className="font-semibold text-[var(--text-primary)]">{status.source}</span>: {status.available ? "Available" : "Unavailable"} — {status.detail}
           </p>
         ))}
       </div>
