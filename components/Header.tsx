@@ -10,7 +10,6 @@ export function Header() {
           <Link href="/" className="focus-ring text-sm font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">
             What Trump Says
           </Link>
-          <span className="hidden text-[10px] uppercase tracking-wide text-muted md:inline">Data source: Truth Social (cached)</span>
         </div>
         <nav className="flex items-center gap-2 text-sm text-secondary">
           <InstallButton />
