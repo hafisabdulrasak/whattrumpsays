@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "sync": "python3 scripts/fetch_truthsocial.py"
+    "sync": "python3 scripts/fetch_truthsocial.py",
+    "debug:truthsocial": "python3 scripts/fetch_truthsocial.py --debug"
   },
   "dependencies": {
     "clsx": "^2.1.1",
