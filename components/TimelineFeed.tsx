@@ -35,14 +35,21 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
   const load = useCallback(
     async (cursor?: string, reset?: boolean) => {
       setLoading(true);
-      const p = new URLSearchParams(queryString);
-      if (cursor) p.set("cursor", cursor);
-      const res = await fetch(`/api/posts?${p.toString()}`);
-      const data = (await res.json()) as FeedResponse;
-      setPosts((prev) => (reset ? data.posts : [...prev, ...data.posts]));
-      setNextCursor(data.nextCursor);
-      setStatuses(data.sourceStatuses);
-      setLoading(false);
+      try {
+        const p = new URLSearchParams(queryString);
+        if (cursor) p.set("cursor", cursor);
+        const res = await fetch(`/api/posts?${p.toString()}`);
+        if (!res.ok) throw new Error(`Failed to load posts (${res.status})`);
+
+        const data = (await res.json()) as FeedResponse;
+        setPosts((prev) => (reset ? data.posts : [...prev, ...data.posts]));
+        setNextCursor(data.nextCursor);
+        setStatuses(data.sourceStatuses);
+      } catch {
+        setNextCursor(null);
+      } finally {
+        setLoading(false);
+      }
     },
     [queryString]
   );

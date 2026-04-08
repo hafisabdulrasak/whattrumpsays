@@ -1,20 +1,14 @@
 # What Trump Says
 
-A premium, dark-mode-first archival interface for browsing Donald J. Trump public posts in strict reverse chronology, with source provenance and timeline UX tuned for readability.
+A premium, dark-mode-first archival interface for browsing Donald J. Trump public posts in strict reverse chronology.
 
 ## Features
 
-- **Reverse-chronological timeline** with newest-first ordering.
-- **Infinite scroll** via cursor pagination (`/api/posts`).
-- **Provider architecture** for source-specific ingestion adapters:
-  - `TruthSocialProvider` (primary live-source integration point)
-  - `TwitterArchiveProvider` (historical archive integration point)
-- **Normalized Post model** used consistently by API + UI.
-- **Source provenance badges** and original timestamps on every card.
-- **Graceful source fallback states** shown in timeline status banner.
-- **Search + filters** (source, date range, quick ranges).
-- **Editorial dark UI** with animation, card depth, and premium spacing.
-- **Fun analysis widgets**: volume meter, all-caps detector, longest post, on-this-day snapshots.
+- Reverse-chronological timeline (latest first)
+- Infinite scroll via cursor pagination (`/api/posts`)
+- Truth Social cached ingestion via Python (`truthbrush`)
+- Normalized post model used by API + UI
+- Empty-state handling when no cached posts exist
 
 ## Stack
 
@@ -23,33 +17,7 @@ A premium, dark-mode-first archival interface for browsing Donald J. Trump publi
 - Tailwind CSS
 - Framer Motion
 - Zustand
-
-## Routes
-
-- `/` — hero + latest timeline
-- `/timeline` — full browsing experience
-- `/post/[id]` — single-post detail view
-- `/about` — methodology and source caveats
-- `/api/posts` — normalized merged feed endpoint
-- `/api/sources/truth-social` — source adapter endpoint
-- `/api/sources/twitter-archive` — source adapter endpoint
-
-## Data model
-
-`NormalizedPost` fields:
-
-- `id`
-- `text`
-- `createdAt`
-- `source`
-- `sourceLabel`
-- `sourceUrl`
-- `authorName`
-- `authorHandle`
-- `media[]`
-- `tags[]`
-- `isArchive`
-- `metadata`
+- Python + truthbrush (ingestion)
 
 ## Local development
 
@@ -60,45 +28,38 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Environment variables
+## Truth Social sync setup
 
-Create `.env.local` as needed.
-
-```bash
-# Placeholder for future live Truth Social ingestion endpoint
-REAL_TRUTHSOCIAL_API_URL=
-
-# Optional archive file URL or dataset path for production ingestion
-TWITTER_ARCHIVE_DATA_URL=
-```
-
-> The current implementation ships with mock adapter payloads for development and demonstrates the ingestion architecture. It never claims fake live freshness.
-
-## Build & deploy
-
-### Production build
+Install truthbrush:
 
 ```bash
-npm run build
-npm run start
+pip install truthbrush
 ```
 
-### Deploy to Vercel
+Sync cached Truth Social posts into `data/posts.json`:
 
-1. Push repository to GitHub.
-2. Import project in Vercel.
-3. Set environment variables in Vercel project settings.
-4. Deploy.
+```bash
+npm run sync
+```
 
-## Architecture notes
+You can also trigger sync through the local API endpoint:
 
-- `lib/providers/*` isolates source logic.
-- `lib/ingestion.ts` merges, deduplicates, applies quick-ranges, caches, and paginates.
-- `app/api/posts/route.ts` exposes normalized feed with cursor pagination.
-- `components/TimelineFeed.tsx` handles infinite scroll + live filter query changes.
+```bash
+curl -X POST http://localhost:3000/api/sync
+```
 
-## Trust & provenance
+> This uses public Truth Social data via truthbrush and may break if the source changes.
 
-- Every post displays source label and timestamp.
-- Source availability state is surfaced to users.
-- Content is displayed as sourced archival/public material without editorial rewrites.
+## Routes
+
+- `/` — hero + latest timeline
+- `/timeline` — full browsing experience
+- `/post/[id]` — single-post detail view
+- `/about` — methodology and source caveats
+- `/api/posts` — cached posts feed endpoint with cursor pagination
+- `/api/sync` — manually refresh cached posts by running Python ingestion
+
+## Notes
+
+- Data is read from `data/posts.json`.
+- Timeline UI and styling are unchanged; only data plumbing is updated.
