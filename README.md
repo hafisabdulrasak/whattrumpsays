@@ -30,24 +30,16 @@ Open `http://localhost:3000`.
 
 ## Truth Social sync setup
 
-### 1) Configure environment
+### 1) Configure environment variables
 
-For Next.js runtime, add credentials to `.env.local`:
-
-```bash
-TRUTHSOCIAL_USERNAME=your_username
-TRUTHSOCIAL_PASSWORD=your_password
-# optional:
-TRUTHSOCIAL_TOKEN=your_token
-```
-
-For direct Python execution (`npm run sync`), add the same keys to `.env`:
+Set credentials in your shell environment (or your process manager) before running
+the app or sync script:
 
 ```bash
-TRUTHSOCIAL_USERNAME=your_username
-TRUTHSOCIAL_PASSWORD=your_password
+export TRUTHSOCIAL_USERNAME=your_username
+export TRUTHSOCIAL_PASSWORD=your_password
 # optional:
-TRUTHSOCIAL_TOKEN=your_token
+export TRUTHSOCIAL_TOKEN=your_token
 ```
 
 Credential resolution order in sync script:
@@ -88,7 +80,7 @@ curl -X POST http://localhost:3000/api/sync
    ```bash
    python3 --version
    ```
-3. Set `TRUTHSOCIAL_USERNAME` and `TRUTHSOCIAL_PASSWORD` (or `TRUTHSOCIAL_TOKEN`) in env.
+3. Set `TRUTHSOCIAL_USERNAME` and `TRUTHSOCIAL_PASSWORD` (or `TRUTHSOCIAL_TOKEN`) in environment variables.
 4. Test truthbrush directly:
    ```bash
    truthbrush statuses realDonaldTrump

@@ -27,28 +27,8 @@ def log(message: str) -> None:
     print(f"[truthsocial-sync] {message}")
 
 
-def _load_dotenv(path: Path) -> dict[str, str]:
-    values: dict[str, str] = {}
-    if not path.exists():
-        return values
-
-    for line in path.read_text(encoding="utf-8").splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#") or "=" not in stripped:
-            continue
-        key, value = stripped.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        values[key] = value
-    return values
-
-
 def _load_credentials() -> tuple[dict[str, str], bool]:
     env = dict(os.environ)
-    dotenv = _load_dotenv(ROOT / ".env")
-
-    for key, value in dotenv.items():
-        env.setdefault(key, value)
 
     token = env.get("TRUTHSOCIAL_TOKEN", "").strip()
     username = env.get("TRUTHSOCIAL_USERNAME", "").strip()
@@ -67,7 +47,7 @@ def _load_credentials() -> tuple[dict[str, str], bool]:
 
     raise RuntimeError(
         "Missing Truth Social credentials. Set TRUTHSOCIAL_TOKEN or both "
-        "TRUTHSOCIAL_USERNAME and TRUTHSOCIAL_PASSWORD in environment or .env"
+        "TRUTHSOCIAL_USERNAME and TRUTHSOCIAL_PASSWORD in environment variables"
     )
 
 

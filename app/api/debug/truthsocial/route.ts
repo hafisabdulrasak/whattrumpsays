@@ -9,30 +9,10 @@ const ROOT = process.cwd();
 const POSTS_PATH = path.join(ROOT, "data", "posts.json");
 const STATUS_PATH = path.join(ROOT, "data", "truthsocial-sync-status.json");
 
-function readEnvFile(filePath: string) {
-  return fs
-    .readFile(filePath, "utf-8")
-    .then((raw) => {
-      const map = new Map<string, string>();
-      for (const line of raw.split(/\r?\n/)) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
-        const [key, ...rest] = trimmed.split("=");
-        map.set(key.trim(), rest.join("=").trim().replace(/^['\"]|['\"]$/g, ""));
-      }
-      return map;
-    })
-    .catch(() => new Map<string, string>());
-}
-
 export async function GET() {
-  const [envLocal, env] = await Promise.all([readEnvFile(path.join(ROOT, ".env.local")), readEnvFile(path.join(ROOT, ".env"))]);
-
-  const getEnv = (key: string) => process.env[key] ?? envLocal.get(key) ?? env.get(key) ?? "";
-
-  const token = getEnv("TRUTHSOCIAL_TOKEN");
-  const username = getEnv("TRUTHSOCIAL_USERNAME");
-  const password = getEnv("TRUTHSOCIAL_PASSWORD");
+  const token = process.env.TRUTHSOCIAL_TOKEN?.trim() ?? "";
+  const username = process.env.TRUTHSOCIAL_USERNAME?.trim() ?? "";
+  const password = process.env.TRUTHSOCIAL_PASSWORD?.trim() ?? "";
 
   const postsStats = await fs.stat(POSTS_PATH).catch(() => null);
   const postsRaw = postsStats ? await fs.readFile(POSTS_PATH, "utf-8").catch(() => "") : "";
