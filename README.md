@@ -30,7 +30,7 @@ Open `http://localhost:3000`.
 
 ## Truth Social sync setup
 
-### 1) Configure environment variables
+### 1) Configure credentials
 
 Set credentials in your shell environment (or your process manager) before running
 the app or sync script:
@@ -45,6 +45,13 @@ export TRUTHSOCIAL_TOKEN=your_token
 Credential resolution order in sync script:
 1. `TRUTHSOCIAL_TOKEN`
 2. `TRUTHSOCIAL_USERNAME` + `TRUTHSOCIAL_PASSWORD`
+3. `scripts/truthsocial.credentials.local.json` (local-only fallback, gitignored)
+
+If you want a local hardcoded file while developing, copy the example and fill it in:
+
+```bash
+cp scripts/truthsocial.credentials.local.example.json scripts/truthsocial.credentials.local.json
+```
 
 ### 2) Install truthbrush
 

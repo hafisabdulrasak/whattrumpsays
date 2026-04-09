@@ -21,6 +21,7 @@ DATA_DIR = ROOT / "data"
 OUT_PATH = DATA_DIR / "posts.json"
 DEBUG_PATH = DATA_DIR / "truthbrush-debug.json"
 STATUS_PATH = DATA_DIR / "truthsocial-sync-status.json"
+LOCAL_CREDENTIALS_PATH = ROOT / "scripts" / "truthsocial.credentials.local.json"
 
 
 def log(message: str) -> None:
@@ -45,9 +46,36 @@ def _load_credentials() -> tuple[dict[str, str], bool]:
             "TRUTHSOCIAL_PASSWORD": password,
         }, False
 
+    if LOCAL_CREDENTIALS_PATH.exists():
+        raw = json.loads(LOCAL_CREDENTIALS_PATH.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raise RuntimeError(
+                f"Invalid local credentials file format at {LOCAL_CREDENTIALS_PATH}. "
+                "Expected a JSON object."
+            )
+
+        local_token = str(raw.get("TRUTHSOCIAL_TOKEN", "")).strip()
+        local_username = str(raw.get("TRUTHSOCIAL_USERNAME", "")).strip()
+        local_password = str(raw.get("TRUTHSOCIAL_PASSWORD", "")).strip()
+        log(
+            "found local creds "
+            f"TRUTHSOCIAL_TOKEN={bool(local_token)} "
+            f"TRUTHSOCIAL_USERNAME={bool(local_username)} "
+            f"TRUTHSOCIAL_PASSWORD={bool(local_password)}"
+        )
+
+        if local_token:
+            return {"TRUTHSOCIAL_TOKEN": local_token}, True
+        if local_username and local_password:
+            return {
+                "TRUTHSOCIAL_USERNAME": local_username,
+                "TRUTHSOCIAL_PASSWORD": local_password,
+            }, False
+
     raise RuntimeError(
         "Missing Truth Social credentials. Set TRUTHSOCIAL_TOKEN or both "
-        "TRUTHSOCIAL_USERNAME and TRUTHSOCIAL_PASSWORD in environment variables"
+        "TRUTHSOCIAL_USERNAME and TRUTHSOCIAL_PASSWORD in environment variables, "
+        f"or create {LOCAL_CREDENTIALS_PATH}"
     )
 
 
