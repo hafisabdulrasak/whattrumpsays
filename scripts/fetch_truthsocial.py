@@ -38,7 +38,10 @@ def _load_credentials() -> tuple[dict[str, str], bool]:
     log(f"found env TRUTHSOCIAL_TOKEN={bool(token)} TRUTHSOCIAL_USERNAME={bool(username)} TRUTHSOCIAL_PASSWORD={bool(password)}")
 
     if token:
-        return {"TRUTHSOCIAL_TOKEN": token}, True
+        creds: dict[str, str] = {"TRUTHSOCIAL_TOKEN": token}
+        if username:
+            creds["TRUTHSOCIAL_USERNAME"] = username
+        return creds, True
 
     if username and password:
         return {
@@ -65,7 +68,10 @@ def _load_credentials() -> tuple[dict[str, str], bool]:
         )
 
         if local_token:
-            return {"TRUTHSOCIAL_TOKEN": local_token}, True
+            creds: dict[str, str] = {"TRUTHSOCIAL_TOKEN": local_token}
+            if local_username:
+                creds["TRUTHSOCIAL_USERNAME"] = local_username
+            return creds, True
         if local_username and local_password:
             return {
                 "TRUTHSOCIAL_USERNAME": local_username,
@@ -73,7 +79,8 @@ def _load_credentials() -> tuple[dict[str, str], bool]:
             }, False
 
     raise RuntimeError(
-        "Missing Truth Social credentials. Set TRUTHSOCIAL_TOKEN or both "
+        "Missing Truth Social credentials. Set TRUTHSOCIAL_TOKEN "
+        "(recommended with TRUTHSOCIAL_USERNAME) or both "
         "TRUTHSOCIAL_USERNAME and TRUTHSOCIAL_PASSWORD in environment variables, "
         f"or create {LOCAL_CREDENTIALS_PATH}"
     )

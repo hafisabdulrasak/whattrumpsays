@@ -43,7 +43,7 @@ export TRUTHSOCIAL_TOKEN=your_token
 ```
 
 Credential resolution order in sync script:
-1. `TRUTHSOCIAL_TOKEN`
+1. `TRUTHSOCIAL_TOKEN` (recommended with `TRUTHSOCIAL_USERNAME`)
 2. `TRUTHSOCIAL_USERNAME` + `TRUTHSOCIAL_PASSWORD`
 3. `scripts/truthsocial.credentials.local.json` (local-only fallback, gitignored)
 
