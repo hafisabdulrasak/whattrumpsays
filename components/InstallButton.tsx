@@ -7,7 +7,7 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
-export function InstallButton() {
+export function InstallButton({ compact = false }: { compact?: boolean }) {
   const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
@@ -40,14 +40,14 @@ export function InstallButton() {
   return (
     <button
       type="button"
-      className="focus-ring rounded-full border border-[var(--border-strong)] px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+      className={`focus-ring rounded-full border border-[var(--border-strong)] font-medium uppercase tracking-wide text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] ${compact ? "min-h-11 px-3 text-[0.65rem]" : "px-3 py-1.5 text-xs"}`}
       onClick={async () => {
         await deferredPrompt.prompt();
         await deferredPrompt.userChoice;
         setDeferredPrompt(null);
       }}
     >
-      Install App
+      Install
     </button>
   );
 }

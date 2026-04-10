@@ -31,7 +31,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="focus-ring rounded-full border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text-secondary)] transition hover:text-[var(--accent)]"
+      className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text-secondary)] transition hover:text-[var(--accent)]"
       aria-label={mounted ? `Switch to ${theme === "dark" ? "light" : "dark"} mode` : "Toggle color theme"}
       title="Toggle theme"
     >

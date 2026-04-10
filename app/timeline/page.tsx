@@ -7,17 +7,17 @@ export default async function TimelinePage() {
   const initial = await getMergedPosts({ limit: 12, source: "all" });
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-      <h1 className="text-3xl font-black text-[var(--text-primary)]">Full Timeline</h1>
-      <p className="mt-2 text-sm text-secondary">Strict reverse chronology. Latest first. Source provenance always visible.</p>
+    <main className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <h1 className="text-2xl font-black text-[var(--text-primary)] sm:text-3xl">Full Timeline</h1>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-secondary">Strict reverse chronology. Latest first. Source provenance always visible.</p>
 
-      <div className="mt-5">
+      <div className="sticky top-[calc(3.6rem+env(safe-area-inset-top))] z-30 mt-4 sm:mt-5">
         <FiltersBar />
       </div>
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
+      <section className="mt-5 grid gap-5 md:mt-6 md:gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <TimelineFeed initial={initial} />
-        <div className="hidden lg:block">
+        <div className="xl:block">
           <SidePanel posts={initial.posts} />
         </div>
       </section>

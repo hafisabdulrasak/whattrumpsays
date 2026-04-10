@@ -86,15 +86,15 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
   }, [load, loading, nextCursor]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3.5 sm:space-y-4">
       {offline && (
-        <div className="rounded-xl border border-[var(--warning)]/60 bg-[var(--accent-soft)] px-4 py-2 text-xs text-secondary">
+        <div className="rounded-xl border border-[var(--warning)]/60 bg-[var(--accent-soft)] px-3 py-2 text-xs text-secondary sm:px-4">
           You are offline. Cached pages are available, but live timeline updates require reconnecting.
         </div>
       )}
-      <div className="glass-panel rounded-xl p-3 text-xs text-muted">
+      <div className="glass-panel rounded-xl p-3 text-xs text-muted sm:p-3.5">
         {statuses.map((status) => (
-          <p key={status.source}>
+          <p key={status.source} className="leading-5">
             <span className="font-semibold text-[var(--text-primary)]">{status.source}</span>: {status.available ? "Available" : "Unavailable"} — {status.detail}
           </p>
         ))}
