@@ -13,7 +13,7 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
       initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
       animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
       transition={{ duration: 0.28, delay: Math.min(index * 0.015, 0.14) }}
-      className="card-surface rounded-2xl p-4 transition hover:shadow-[var(--shadow-gold)] sm:p-5 md:p-6"
+      className="card-surface min-w-0 rounded-2xl p-3.5 transition hover:shadow-[var(--shadow-gold)] sm:p-5 md:p-6"
     >
       <header className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] text-muted sm:mb-4 sm:gap-2 sm:text-xs">
         <span className="meta-pill rounded-full px-2.5 py-1">{post.sourceLabel}</span>
@@ -21,9 +21,9 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
         {post.metadata.rapidFireGroup && <span className="rounded-full border border-[var(--accent)]/50 bg-[var(--accent-soft)] px-2.5 py-1 text-[var(--accent)]">Rapid Fire</span>}
       </header>
 
-      <p className="whitespace-pre-wrap break-words text-base leading-7 text-[var(--text-primary)] sm:text-[1.05rem] sm:leading-8 md:text-[1.1rem] md:leading-8">{post.text}</p>
+      <p className="timeline-copy whitespace-pre-wrap break-words text-[0.99rem] leading-7 text-[var(--text-primary)] sm:text-[1.06rem] sm:leading-8 md:text-[1.1rem] md:leading-8">{post.text}</p>
 
-      <footer className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-2 text-[11px] text-muted sm:mt-5 sm:text-xs">
+      <footer className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px] text-muted sm:mt-5 sm:gap-x-2.5 sm:gap-y-2 sm:text-xs">
         <time dateTime={post.createdAt} title={format(new Date(post.createdAt), "PPPpp")} className="font-medium text-secondary">
           {format(new Date(post.createdAt), "PPpp")}
         </time>

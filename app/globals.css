@@ -51,12 +51,20 @@ body {
   overflow-x: clip;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   min-height: 100vh;
   font-feature-settings: "ss01" on, "cv01" on;
   line-height: 1.5;
   text-rendering: optimizeLegibility;
   transition: background-color 240ms ease, color 240ms ease;
+}
+
+#__next {
+  isolation: isolate;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -102,6 +110,14 @@ body {
     background: var(--surface);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-soft);
+  }
+
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 sm:px-4 sm:pt-6 md:px-6 md:pt-8;
+  }
+
+  .timeline-copy {
+    max-width: 72ch;
   }
 
   .button-gold {
