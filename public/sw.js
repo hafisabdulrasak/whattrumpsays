@@ -1,15 +1,21 @@
-const CACHE_NAME = "wts-shell-v1";
+const CACHE_NAME = "wts-shell-v2";
 const SHELL_ROUTES = ["/", "/timeline", "/about", "/offline", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_ROUTES)).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(SHELL_ROUTES))
+      .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -19,6 +25,14 @@ self.addEventListener("fetch", (event) => {
 
   if (request.method !== "GET") return;
   if (url.pathname.startsWith("/api/")) return;
+
+  // Never cache Next.js build assets. Caching chunked runtime files can cause
+  // stale webpack manifests and "Cannot read properties of undefined (reading 'call')" errors
+  // after a new deployment.
+  if (url.pathname.startsWith("/_next/")) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(
