@@ -7,6 +7,7 @@ import { PostCard } from "@/components/PostCard";
 import { NormalizedPost } from "@/lib/types";
 import { useTimelineStore } from "@/store/useTimelineStore";
 
+
 type FeedResponse = {
   posts: NormalizedPost[];
   nextCursor: string | null;
