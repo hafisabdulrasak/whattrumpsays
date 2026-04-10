@@ -16,13 +16,13 @@ export function FiltersBar() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   return (
-    <section className="glass-panel rounded-2xl p-3 shadow-[var(--shadow-soft)] sm:p-4 md:p-5">
+    <section className="glass-panel rounded-2xl p-2.5 shadow-[var(--shadow-soft)] sm:p-4 md:p-5">
       <div className="md:hidden">
         <div className="flex items-center gap-2">
           <label className="min-w-0 flex-1">
             <span className="sr-only">Search posts</span>
             <input
-              className="focus-ring min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] px-3.5 text-sm text-[var(--text-primary)]"
+              className="focus-ring min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] px-3.5 text-sm text-[var(--text-primary)] placeholder:text-muted"
               value={q}
               onChange={(e) => setQuery({ q: e.target.value })}
               placeholder="Search timeline"
@@ -31,7 +31,7 @@ export function FiltersBar() {
           </label>
           <button
             type="button"
-            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text-secondary)]"
+            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] px-3 text-[var(--text-secondary)]"
             onClick={() => setShowMobileFilters(true)}
             aria-label="Open filter controls"
           >
@@ -39,7 +39,7 @@ export function FiltersBar() {
           </button>
         </div>
 
-        <div className="mt-2 -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
+        <div className="mt-2 -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {quickRanges.map(([value, label]) => (
             <button
               key={value}
@@ -53,7 +53,7 @@ export function FiltersBar() {
 
         {showMobileFilters && (
           <div className="fixed inset-0 z-50 flex items-end bg-black/50" role="dialog" aria-modal="true" aria-label="Timeline filters">
-            <div className="max-h-[78vh] w-full overflow-y-auto rounded-t-2xl border border-[var(--border)] bg-[var(--bg)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="max-h-[82vh] w-full overflow-y-auto rounded-t-2xl border border-[var(--border)] bg-[var(--bg)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">Filters</h3>
                 <button
@@ -121,7 +121,7 @@ export function FiltersBar() {
         <label className="md:col-span-2">
           <span className="mb-1 block text-xs uppercase tracking-wider text-muted">Search</span>
           <input
-            className="focus-ring min-h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]"
+            className="focus-ring min-h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-muted"
             value={q}
             onChange={(e) => setQuery({ q: e.target.value })}
             placeholder="Search post text"

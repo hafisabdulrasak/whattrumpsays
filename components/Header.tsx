@@ -19,11 +19,11 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[color-mix(in_oklab,var(--bg)_94%,transparent)] backdrop-blur supports-[padding:max(0px)]:pt-[max(env(safe-area-inset-top),0px)]">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4 md:px-6 md:py-3">
+    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[color-mix(in_oklab,var(--bg)_95%,transparent)] backdrop-blur supports-[padding:max(0px)]:pt-[max(env(safe-area-inset-top),0px)]">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-3 py-2 sm:px-4 md:px-6 md:py-3">
         <Link
           href="/"
-          className="focus-ring max-w-[58vw] truncate text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[var(--accent)] sm:max-w-none sm:text-xs md:text-sm"
+          className="focus-ring max-w-[58vw] truncate text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[var(--accent)] sm:max-w-none sm:text-xs md:text-sm"
         >
           What Trump Says
         </Link>
@@ -36,7 +36,7 @@ export function Header() {
 
           <button
             type="button"
-            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] md:hidden"
+            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] md:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -47,10 +47,10 @@ export function Header() {
 
           <nav className="hidden items-center gap-2 text-sm text-secondary md:flex">
             <InstallButton />
-            <Link href="/timeline" className="focus-ring rounded-md px-3 py-2 hover:bg-[var(--surface)]">
+            <Link href="/timeline" className="focus-ring rounded-lg px-3 py-2 hover:bg-[var(--surface)]">
               Timeline
             </Link>
-            <Link href="/about" className="focus-ring rounded-md px-3 py-2 hover:bg-[var(--surface)]">
+            <Link href="/about" className="focus-ring rounded-lg px-3 py-2 hover:bg-[var(--surface)]">
               About
             </Link>
           </nav>
@@ -58,12 +58,12 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <div id="mobile-nav" className="border-t border-[var(--border)] bg-[var(--bg-muted)] px-3 pb-3 pt-2 md:hidden">
-          <nav className="grid gap-1 text-sm text-secondary">
-            <Link href="/timeline" className="focus-ring rounded-lg px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
+        <div id="mobile-nav" className="border-t border-[var(--border)] bg-[var(--bg-muted)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 md:hidden">
+          <nav className="grid gap-1.5 text-sm text-secondary">
+            <Link href="/timeline" className="focus-ring rounded-xl px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
               Timeline
             </Link>
-            <Link href="/about" className="focus-ring rounded-lg px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
+            <Link href="/about" className="focus-ring rounded-xl px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
               About
             </Link>
           </nav>
