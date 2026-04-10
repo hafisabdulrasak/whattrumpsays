@@ -53,10 +53,10 @@ export async function Hero() {
         </p>
       </div>
 
-      {/* Two-column layout */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-[1fr_auto]">
+      {/* 3-column on desktop, stacked on mobile */}
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
 
-        {/* LEFT — main content */}
+        {/* COL 1 — Title */}
         <div className="p-4 sm:p-7 md:p-10">
           <h1 className="font-display text-[2.2rem] font-black uppercase leading-[0.95] tracking-tight text-[var(--text-primary)] sm:text-5xl md:text-6xl lg:text-7xl">
             What
@@ -65,10 +65,15 @@ export async function Hero() {
             <br />
             Says
           </h1>
+        </div>
 
-          <div className="mt-4 h-1 w-16 rounded-full sm:mt-5 sm:w-20" style={{ background: "var(--accent-yellow)" }} />
+        {/* COL 2 — Description + CTA (fills the empty space) */}
+        <div
+          className="flex flex-col justify-center border-[var(--border)] p-4 sm:p-7 md:border-l md:border-r md:p-10"
+        >
+          <div className="h-1 w-14 rounded-full" style={{ background: "var(--accent-yellow)" }} />
 
-          <p className="mt-4 max-w-sm text-base leading-7 text-[var(--text-secondary)] sm:mt-5 sm:text-lg">
+          <p className="mt-4 text-base leading-7 text-[var(--text-secondary)] sm:text-lg">
             A reverse-chronological archive of Donald Trump&apos;s public posts.
           </p>
 
@@ -86,7 +91,7 @@ export async function Hero() {
             </div>
           )}
 
-          <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/timeline"
               className="focus-ring button-gold inline-flex min-h-11 items-center justify-center rounded-sm px-6 py-2.5 text-sm tracking-widest transition"
@@ -100,12 +105,11 @@ export async function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — decorative campaign panel */}
+        {/* COL 3 — Stats panel */}
         <div
-          className="hidden md:flex md:flex-col md:items-center md:justify-center md:gap-6 md:border-l md:px-10 md:py-10"
-          style={{ borderColor: "var(--border)", minWidth: "260px" }}
+          className="hidden md:flex md:flex-col md:items-center md:justify-center md:gap-6 md:px-10 md:py-10"
+          style={{ minWidth: "200px" }}
         >
-          {/* Big post count */}
           <div className="text-center">
             <p
               className="font-display font-black leading-none tabular-nums"
@@ -113,33 +117,21 @@ export async function Hero() {
             >
               {count > 0 ? count : "—"}
             </p>
-            <p
-              className="mt-1 text-[11px] font-black uppercase tracking-[0.3em]"
-              style={{ color: "var(--text-muted)" }}
-            >
+            <p className="mt-1 text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)]">
               Posts Archived
             </p>
           </div>
 
-          {/* Divider */}
           <div className="h-px w-16" style={{ background: "var(--accent-yellow)" }} />
 
-          {/* Source badge */}
           <div className="text-center">
             <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-muted)]">Source</p>
-            <p
-              className="mt-1 font-black uppercase tracking-widest"
-              style={{ color: "var(--text-primary)", fontSize: "13px" }}
-            >
+            <p className="mt-1 text-[13px] font-black uppercase tracking-widest text-[var(--text-primary)]">
               Truth Social
             </p>
           </div>
 
-          {/* Stars decoration */}
-          <p
-            className="font-black tracking-[0.4em]"
-            style={{ color: "var(--accent)", fontSize: "18px" }}
-          >
+          <p className="font-black tracking-[0.4em] text-[var(--accent)]" style={{ fontSize: "18px" }}>
             ★ ★ ★
           </p>
         </div>

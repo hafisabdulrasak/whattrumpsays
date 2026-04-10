@@ -1,117 +1,107 @@
 # What Trump Says
 
-A premium, dark-mode-first archival interface for browsing Donald J. Trump public posts in strict reverse chronology.
+A campaign-poster-styled archival interface for browsing Donald J. Trump's public Truth Social posts in strict reverse chronology.
 
 ## Features
 
-- Reverse-chronological timeline (latest first)
+- Reverse-chronological timeline with vertical timeline connector (date separators, gap markers)
 - Infinite scroll via cursor pagination (`/api/posts`)
-- Truth Social cached ingestion via Python (`truthbrush`)
-- Normalized post model used by API + UI
-- Empty-state handling when no cached posts exist
+- Full-text search, date range filters, and quick filters (Today / This Week / This Month / Archive)
+- Playwright-based browser sync — bypasses Cloudflare, captures real engagement data (`reblogs_count`)
+- Right sidebar: Today at a Glance, Activity Last Week heatmap, Top 3 Most Shared posts, Highlights
+- Campaign poster design: red/yellow/cream palette, bold typography, post number badges
+- Post card left-stripe accent with hover glow, bigger text, clickable sidebar mini-cards
+- Hero with two-column layout: title + live post count / source stats panel
+- Light/dark mode toggle
 
 ## Stack
 
 - Next.js 15 (App Router)
 - TypeScript
 - Tailwind CSS
-- Framer Motion
-- Zustand
-- Python + truthbrush (ingestion)
+- Zustand (filter state)
+- Python + Playwright (ingestion)
 
 ## Local development
 
 ```bash
 npm install
-npm run dev
+pip install playwright
+python -m playwright install chromium
+npm run sync        # fetch posts from Truth Social
+npm run dev         # start dev server
 ```
 
 Open `http://localhost:3000`.
 
 ## Truth Social sync setup
 
-### 1) Configure credentials
+### Credentials
 
-Set credentials in your shell environment (or your process manager) before running
-the app or sync script:
+Set credentials via environment variables or `scripts/truthsocial.credentials.local.json`:
 
 ```bash
-export TRUTHSOCIAL_USERNAME=your_username
-export TRUTHSOCIAL_PASSWORD=your_password
-# optional:
 export TRUTHSOCIAL_TOKEN=your_token
+export TRUTHSOCIAL_USERNAME=your_username
+export TRUTHSOCIAL_PASSWORD=your_password   # fallback if no token
 ```
 
-Credential resolution order in sync script:
-1. `TRUTHSOCIAL_TOKEN` (recommended with `TRUTHSOCIAL_USERNAME`)
-2. `TRUTHSOCIAL_USERNAME` + `TRUTHSOCIAL_PASSWORD`
-3. `scripts/truthsocial.credentials.local.json` (local-only fallback, gitignored)
-
-If you want a local hardcoded file while developing, copy the example and fill it in:
-
+Local file fallback (gitignored):
 ```bash
 cp scripts/truthsocial.credentials.local.example.json scripts/truthsocial.credentials.local.json
 ```
 
-### 2) Install truthbrush
+Credential resolution order:
+1. `TRUTHSOCIAL_TOKEN` (recommended)
+2. `TRUTHSOCIAL_USERNAME` + `TRUTHSOCIAL_PASSWORD`
+3. `scripts/truthsocial.credentials.local.json`
+
+### Sync commands
 
 ```bash
-pip install truthbrush
+npm run sync                  # primary — Playwright browser-based fetch
+npm run sync:truthbrush       # fallback — CLI-based fetch (may be blocked by Cloudflare)
+npm run debug:truthsocial     # Playwright sync with debug screenshot saved to data/
 ```
 
-### 3) Sync cached Truth Social posts into `data/posts.json`
-
+Trigger via API:
 ```bash
-npm run sync
+curl -X POST http://localhost:PORT/api/sync
 ```
 
-Debug sync output:
+### Why Playwright?
 
-```bash
-npm run debug:truthsocial
-```
+Truth Social's API is behind Cloudflare. Server-side HTTP requests (including `truthbrush`) get blocked with a `403 Just a moment...` challenge on datacenter IPs. The Playwright sync launches a real Chromium browser, navigates to Trump's profile, and intercepts the API responses the page makes — bypassing the challenge entirely.
 
-You can also trigger sync through the local API endpoint:
+The Playwright script also captures `reblogs_count` and `favourites_count` from the raw API responses, which the CLI tool discards.
 
-```bash
-curl -X POST http://localhost:3000/api/sync
-```
+## API
 
-## Troubleshooting Truthbrush
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/posts` | GET | Paginated posts feed. Params: `limit`, `cursor`, `q`, `source`, `start`, `end`, `quick` |
+| `/api/sync` | POST | Trigger Playwright sync to refresh `data/posts.json` |
+| `/api/debug/truthsocial` | GET | Diagnostics: Python version, truthbrush install, credentials, sync status |
 
-1. Install truthbrush:
-   ```bash
-   pip install truthbrush
-   ```
-2. Verify Python version (needs 3.10+):
-   ```bash
-   python3 --version
-   ```
-3. Set `TRUTHSOCIAL_USERNAME` and `TRUTHSOCIAL_PASSWORD` (or `TRUTHSOCIAL_TOKEN`) in environment variables.
-4. Test truthbrush directly:
-   ```bash
-   truthbrush statuses realDonaldTrump
-   ```
-5. Run cache sync:
-   ```bash
-   npm run sync
-   ```
-6. Inspect diagnostics:
-   - `http://localhost:3000/api/debug/truthsocial`
+## Pages
 
-## Routes
+| Route | Description |
+|-------|-------------|
+| `/` | Hero + latest timeline + sidebar |
+| `/timeline` | Full browsable feed with filters + sidebar |
+| `/post/[id]` | Single post detail view |
+| `/about` | Methodology and source notes |
 
-- `/` — hero + latest timeline
-- `/timeline` — full browsing experience
-- `/post/[id]` — single-post detail view
-- `/about` — methodology and source caveats
-- `/api/posts` — cached posts feed endpoint with cursor pagination + cache metadata
-- `/api/sync` — manually refresh cached posts by running Python ingestion
-- `/api/debug/truthsocial` — diagnostics for truthbrush install, env credentials, cache health, and sync status
+## Data
+
+- All posts cached in `data/posts.json` — API never calls Truth Social live
+- `data/truthsocial-sync-status.json` — last sync timestamp and status
+- `data/truthbrush-debug.json` — raw output saved on parse errors
+- `data/playwright-debug.png` — screenshot saved when running `--debug` flag
+- Failed syncs preserve the existing cache — no data loss on error
 
 ## Notes
 
-- Data is read from `data/posts.json`.
-- Failed sync attempts do not overwrite existing cached posts.
-- If parsing fails, raw truthbrush output is preserved at `data/truthbrush-debug.json`.
-- Timeline UI and styling remain unchanged.
+- On Windows, Python is invoked as `python` (not `python3`) — handled automatically
+- `npm run typecheck` for TypeScript validation
+- `npm run lint` for ESLint

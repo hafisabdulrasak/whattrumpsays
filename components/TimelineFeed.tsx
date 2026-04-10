@@ -196,14 +196,35 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
                 items.push(<TimeGapMarker key={`gap-${post.id}`} hours={gap} />);
               }
 
+              const timeLabel = new Intl.DateTimeFormat("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              }).format(new Date(post.createdAt));
+
               items.push(
-                <div key={post.id} className="relative sm:pl-9">
-                  {/* Dot on the line */}
-                  <div
-                    className="absolute left-1.5 top-[22px] hidden h-[10px] w-[10px] rounded-full border-2 sm:block"
-                    style={{ borderColor: "var(--accent-dim)", backgroundColor: "var(--bg)" }}
-                  />
-                  <PostCard post={post} index={index} />
+                <div key={post.id} className="relative">
+                  {/* Dot + time row — desktop only */}
+                  <div className="relative mb-1 hidden h-6 items-center sm:flex">
+                    <div
+                      className="absolute left-[6px] h-[10px] w-[10px] rounded-full border-2"
+                      style={{ borderColor: "var(--accent)", backgroundColor: "var(--bg)" }}
+                    />
+                    <span
+                      className="pl-[26px] tabular-nums"
+                      style={{
+                        fontSize: "10px",
+                        color: "var(--text-muted)",
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      {timeLabel}
+                    </span>
+                  </div>
+                  {/* Card */}
+                  <div className="sm:pl-9">
+                    <PostCard post={post} index={index} />
+                  </div>
                 </div>
               );
 

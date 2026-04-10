@@ -3,13 +3,6 @@
 import Link from "next/link";
 import { NormalizedPost } from "@/lib/types";
 
-function formatAbsoluteDate(isoDate: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(isoDate));
-}
-
 function formatRelativeTime(isoDate: string) {
   const target = new Date(isoDate).getTime();
   const now = Date.now();
@@ -68,7 +61,7 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
         {/* Post number — right-aligned */}
         <span
           className="ml-auto font-black tabular-nums"
-          style={{ color: "var(--accent)", fontSize: "11px", letterSpacing: "0.05em" }}
+          style={{ color: "var(--accent)", fontSize: "15px", letterSpacing: "0.05em" }}
         >
           #{index + 1}
         </span>
@@ -81,13 +74,45 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
       <footer className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px] text-muted sm:mt-5 sm:gap-x-2.5 sm:gap-y-2 sm:text-xs">
         <time
           dateTime={post.createdAt}
-          title={formatAbsoluteDate(post.createdAt)}
           className="font-medium text-[var(--text-secondary)]"
         >
-          {formatAbsoluteDate(post.createdAt)}
+          {formatRelativeTime(post.createdAt)}
         </time>
-        <span aria-hidden>·</span>
-        <span>{formatRelativeTime(post.createdAt)}</span>
+
+        {/* Engagement counts */}
+        {(post.metadata.sharesCount > 0 || post.metadata.favouritesCount > 0) && (
+          <>
+            <span aria-hidden>·</span>
+            <span className="flex items-center gap-3">
+              {post.metadata.sharesCount > 0 && (
+                <span className="flex items-center gap-1 tabular-nums" title="ReTruths">
+                  {/* retweet icon */}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--accent)" }}>
+                    <path d="M17 1l4 4-4 4" />
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                    <path d="M7 23l-4-4 4-4" />
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                  </svg>
+                  <span style={{ color: "var(--accent)" }} className="font-semibold">
+                    {post.metadata.sharesCount.toLocaleString()}
+                  </span>
+                </span>
+              )}
+              {post.metadata.favouritesCount > 0 && (
+                <span className="flex items-center gap-1 tabular-nums" title="Likes">
+                  {/* heart icon */}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ color: "#e879a0" }}>
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  <span style={{ color: "#e879a0" }} className="font-semibold">
+                    {post.metadata.favouritesCount.toLocaleString()}
+                  </span>
+                </span>
+              )}
+            </span>
+          </>
+        )}
+
         <span aria-hidden>·</span>
         <Link
           href={`/post/${post.id}`}
