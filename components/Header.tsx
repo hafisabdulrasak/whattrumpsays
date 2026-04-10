@@ -45,7 +45,7 @@ export function Header() {
             {menuOpen ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
           </button>
 
-          <nav className="hidden items-center gap-2 text-sm text-secondary md:flex">
+          <nav className="hidden items-center gap-2 text-sm text-secondary md:flex" aria-label="Primary">
             <InstallButton />
             <Link href="/timeline" className="focus-ring rounded-lg px-3 py-2 hover:bg-[var(--surface)]">
               Timeline
@@ -59,7 +59,7 @@ export function Header() {
 
       {menuOpen && (
         <div id="mobile-nav" className="border-t border-[var(--border)] bg-[var(--bg-muted)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 md:hidden">
-          <nav className="grid gap-1.5 text-sm text-secondary">
+          <nav className="grid gap-1.5 text-sm text-secondary" aria-label="Mobile">
             <Link href="/timeline" className="focus-ring rounded-xl px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
               Timeline
             </Link>

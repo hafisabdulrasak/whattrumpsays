@@ -89,16 +89,16 @@ export function TimelineFeed({ initial }: { initial: FeedResponse }) {
     <div className="min-w-0 space-y-3 sm:space-y-4">
       {offline && (
         <div className="rounded-xl border border-[var(--warning)]/60 bg-[var(--accent-soft)] px-3 py-2.5 text-xs leading-5 text-secondary sm:px-4">
-          You are offline. Cached pages are available, but live timeline updates require reconnecting.
+          You are offline. Cached timeline entries are still readable, but new sync updates will resume after reconnecting.
         </div>
       )}
-      <div className="glass-panel rounded-xl p-3 text-xs text-muted sm:p-3.5">
+      <section className="glass-panel rounded-xl p-3 text-xs text-muted sm:p-3.5" aria-label="Source availability status">
         {statuses.map((status) => (
           <p key={status.source} className="break-words leading-5">
             <span className="font-semibold text-[var(--text-primary)]">{status.source}</span>: {status.available ? "Available" : "Unavailable"} — {status.detail}
           </p>
         ))}
-      </div>
+      </section>
 
       {posts.length === 0 && !loading ? <EmptyState /> : posts.map((post, index) => <PostCard key={post.id} post={post} index={index} />)}
       {loading && (
