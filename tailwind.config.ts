@@ -6,19 +6,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        obsidian: "#0a0d14",
-        navy: "#111827",
-        steel: "#2b3240",
-        parchment: "#f4f2ea",
-        gold: "#b89c5c",
-        crimson: "#8b1f2b"
+        campaign: {
+          black: "#141414",
+          red: "#E8271D",
+          yellow: "#FFCE00",
+          cream: "#F5F0E0",
+        }
       },
       boxShadow: {
-        panel: "0 10px 30px rgba(0, 0, 0, 0.35)",
-        glow: "0 0 0 1px rgba(184,156,92,0.4), 0 12px 40px rgba(0,0,0,0.45)"
+        panel: "0 10px 30px rgba(0, 0, 0, 0.4)",
+        glow: "0 0 0 1px rgba(232,39,29,0.4), 0 12px 40px rgba(0,0,0,0.5)"
       },
       backgroundImage: {
-        "hero-gradient": "radial-gradient(ellipse at top, rgba(184,156,92,0.16), transparent 65%), linear-gradient(180deg, #0a0d14 0%, #0c111a 100%)"
+        "hero-gradient":
+          "radial-gradient(ellipse at top left, rgba(232,39,29,0.18), transparent 55%), linear-gradient(180deg, #1c1c1c 0%, #1e1e1e 100%)"
       }
     }
   },

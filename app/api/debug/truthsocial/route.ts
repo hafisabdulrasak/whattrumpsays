@@ -8,6 +8,7 @@ const execFileAsync = promisify(execFile);
 const ROOT = process.cwd();
 const POSTS_PATH = path.join(ROOT, "data", "posts.json");
 const STATUS_PATH = path.join(ROOT, "data", "truthsocial-sync-status.json");
+const PYTHON_CMD = process.platform === "win32" ? "python" : "python3";
 
 export async function GET() {
   const token = process.env.TRUTHSOCIAL_TOKEN?.trim() ?? "";
@@ -42,8 +43,8 @@ export async function GET() {
     }
   }
 
-  const truthbrushInstalled = await execFileAsync("python3", ["-c", "import shutil; print(bool(shutil.which('truthbrush'))) "]).then(({ stdout }) => stdout.trim() === "True").catch(() => false);
-  const pythonVersion = await execFileAsync("python3", ["--version"]).then(({ stdout, stderr }) => (stdout || stderr).trim()).catch(() => "unknown");
+  const truthbrushInstalled = await execFileAsync(PYTHON_CMD, ["-c", "import shutil; print(bool(shutil.which('truthbrush'))) "]).then(({ stdout }) => stdout.trim() === "True").catch(() => false);
+  const pythonVersion = await execFileAsync(PYTHON_CMD, ["--version"]).then(({ stdout, stderr }) => (stdout || stderr).trim()).catch(() => "unknown");
 
   return NextResponse.json({
     truthbrushInstalled,

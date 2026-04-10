@@ -4,12 +4,13 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 
 const ROOT = process.cwd();
-const SCRIPT_PATH = path.join(ROOT, "scripts", "fetch_truthsocial.py");
+const SCRIPT_PATH = path.join(ROOT, "scripts", "fetch_playwright.py");
 const DATA_PATH = path.join(ROOT, "data", "posts.json");
+const PYTHON_CMD = process.platform === "win32" ? "python" : "python3";
 
 function runSyncScript() {
   return new Promise<{ code: number; stdout: string; stderr: string }>((resolve, reject) => {
-    const child = spawn("python3", [SCRIPT_PATH], {
+    const child = spawn(PYTHON_CMD, [SCRIPT_PATH], {
       cwd: ROOT,
       env: process.env,
       stdio: ["ignore", "pipe", "pipe"]

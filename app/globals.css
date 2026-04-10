@@ -4,44 +4,54 @@
 
 :root {
   color-scheme: dark;
-  --bg: #0b0c10;
-  --bg-muted: #14161d;
-  --surface: #171a22;
-  --surface-elevated: #1f2430;
-  --text-primary: #f5f0e4;
-  --text-secondary: #d4cbb8;
-  --text-muted: #a8a098;
-  --accent: #c5a66a;
-  --accent-soft: #2f281a;
-  --border: #323847;
-  --border-strong: #5c667d;
-  --success: #1f9d72;
-  --warning: #d29b3b;
-  --error: #bb4b4f;
-  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.35);
-  --shadow-gold: 0 0 0 1px rgba(197, 166, 106, 0.45), 0 20px 55px rgba(0, 0, 0, 0.45);
-  --hero-overlay: radial-gradient(ellipse at top, rgba(197, 166, 106, 0.21), transparent 62%);
+  --bg: #141414;
+  --bg-muted: #1c1c1c;
+  --surface: #1e1e1e;
+  --surface-elevated: #272727;
+  --text-primary: #F5F0E0;
+  --text-secondary: #D9D4C4;
+  --text-muted: #8a8680;
+  --accent: #E8271D;
+  --accent-yellow: #FFCE00;
+  --accent-soft: #3a0a08;
+  --border: #2e2e2e;
+  --border-strong: #484848;
+  --success: #28a745;
+  --warning: #FFCE00;
+  --error: #E8271D;
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --shadow-accent: 0 0 0 1px rgba(232, 39, 29, 0.5), 0 20px 55px rgba(0, 0, 0, 0.55);
+  --hero-overlay: radial-gradient(ellipse at top left, rgba(232, 39, 29, 0.18), transparent 55%),
+                  radial-gradient(ellipse at bottom right, rgba(255, 206, 0, 0.07), transparent 50%);
+  --accent-dim: rgba(232, 39, 29, 0.5);
+  --accent-bright: rgba(232, 39, 29, 0.9);
+  --halftone: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
 }
 
 html.light {
   color-scheme: light;
-  --bg: #f2eee4;
-  --bg-muted: #ebe5d8;
-  --surface: #f8f4ea;
-  --surface-elevated: #fefcf5;
-  --text-primary: #1d1a17;
-  --text-secondary: #3e3830;
-  --text-muted: #6e665c;
-  --accent: #9e7a3f;
-  --accent-soft: #efe3c8;
-  --border: #dbd2bf;
-  --border-strong: #c0b193;
+  --bg: #F5F0E0;
+  --bg-muted: #EDE8D7;
+  --surface: #FAF7ED;
+  --surface-elevated: #FFFFFF;
+  --text-primary: #141414;
+  --text-secondary: #2e2e2e;
+  --text-muted: #666660;
+  --accent: #CC1F16;
+  --accent-yellow: #D4A800;
+  --accent-soft: #FDECEA;
+  --border: #D9D4C4;
+  --border-strong: #B8B2A0;
   --success: #1f8a67;
-  --warning: #aa7622;
-  --error: #9f3f42;
-  --shadow-soft: 0 16px 32px rgba(69, 55, 27, 0.12);
-  --shadow-gold: 0 0 0 1px rgba(158, 122, 63, 0.35), 0 12px 40px rgba(69, 55, 27, 0.14);
-  --hero-overlay: radial-gradient(ellipse at top, rgba(158, 122, 63, 0.2), transparent 60%);
+  --warning: #B8920A;
+  --error: #CC1F16;
+  --shadow-soft: 0 16px 32px rgba(20, 20, 20, 0.1);
+  --shadow-accent: 0 0 0 1px rgba(204, 31, 22, 0.3), 0 12px 40px rgba(20, 20, 20, 0.12);
+  --hero-overlay: radial-gradient(ellipse at top left, rgba(204, 31, 22, 0.12), transparent 55%),
+                  radial-gradient(ellipse at bottom right, rgba(212, 168, 0, 0.08), transparent 50%);
+  --accent-dim: rgba(204, 31, 22, 0.45);
+  --accent-bright: rgba(204, 31, 22, 0.9);
+  --halftone: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
 }
 
 html,
@@ -84,7 +94,8 @@ body {
 }
 
 ::selection {
-  background: rgba(197, 166, 106, 0.34);
+  background: rgba(232, 39, 29, 0.28);
+  color: var(--text-primary);
 }
 
 @layer components {
@@ -94,7 +105,7 @@ body {
 
   .glass-panel {
     border: 1px solid var(--border);
-    background: linear-gradient(135deg, color-mix(in oklab, var(--surface) 90%, transparent), color-mix(in oklab, var(--surface-elevated) 84%, transparent));
+    background: linear-gradient(135deg, color-mix(in oklab, var(--surface) 92%, transparent), color-mix(in oklab, var(--surface-elevated) 86%, transparent));
     backdrop-filter: blur(8px);
   }
 
@@ -120,18 +131,43 @@ body {
     max-width: 72ch;
   }
 
+  /* Campaign button — red fill, cream text */
   .button-gold {
     background: var(--accent);
     color: var(--bg);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .button-gold:hover {
-    filter: brightness(1.08);
+    filter: brightness(1.1);
   }
 
   .meta-pill {
     border: 1px solid var(--border);
     background: color-mix(in oklab, var(--surface-elevated) 88%, transparent);
     color: var(--text-secondary);
+  }
+
+  /* Campaign poster stripe pattern */
+  .poster-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(232, 39, 29, 0.06) 6px,
+      rgba(232, 39, 29, 0.06) 7px
+    );
+  }
+
+  html.light .poster-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(204, 31, 22, 0.05) 6px,
+      rgba(204, 31, 22, 0.05) 7px
+    );
   }
 }

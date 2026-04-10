@@ -16,6 +16,8 @@ export type NormalizedPost = {
     allCapsScore: number;
     rapidFireGroup?: string;
     characterCount: number;
+    sharesCount: number;
+    favouritesCount: number;
   };
 };
 

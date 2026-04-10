@@ -12,7 +12,7 @@ const quickRanges = [
 ] as const;
 
 export function FiltersBar() {
-  const { q, source, start, end, quick, setQuery, resetDates } = useTimelineStore();
+  const { q, start, end, quick, setQuery, resetDates } = useTimelineStore();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   return (
@@ -67,21 +67,7 @@ export function FiltersBar() {
               </div>
 
               <div className="grid gap-3">
-                <label>
-                  <span className="mb-1 block text-xs uppercase tracking-wider text-muted">Source</span>
-                  <select
-                    className="focus-ring min-h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]"
-                    value={source}
-                    onChange={(e) => setQuery({ source: e.target.value as "all" | "truth_social" | "twitter_archive" })}
-                    aria-label="Filter source"
-                  >
-                    <option value="all">All</option>
-                    <option value="truth_social">Truth Social</option>
-                    <option value="twitter_archive">Twitter Archive</option>
-                  </select>
-                </label>
-
-                <div className="grid grid-cols-2 gap-2">
+<div className="grid grid-cols-2 gap-2">
                   <label>
                     <span className="mb-1 block text-xs uppercase tracking-wider text-muted">From</span>
                     <input
@@ -129,21 +115,7 @@ export function FiltersBar() {
           />
         </label>
 
-        <label>
-          <span className="mb-1 block text-xs uppercase tracking-wider text-muted">Source</span>
-          <select
-            className="focus-ring min-h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]"
-            value={source}
-            onChange={(e) => setQuery({ source: e.target.value as "all" | "truth_social" | "twitter_archive" })}
-            aria-label="Filter source"
-          >
-            <option value="all">All</option>
-            <option value="truth_social">Truth Social</option>
-            <option value="twitter_archive">Twitter Archive</option>
-          </select>
-        </label>
-
-        <label>
+<label>
           <span className="mb-1 block text-xs uppercase tracking-wider text-muted">From</span>
           <input className="focus-ring min-h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-primary)]" type="date" value={start ?? ""} onChange={(e) => setQuery({ start: e.target.value || undefined, quick: undefined })} />
         </label>

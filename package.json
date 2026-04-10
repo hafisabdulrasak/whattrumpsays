@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "sync": "python3 scripts/fetch_truthsocial.py",
-    "debug:truthsocial": "python3 scripts/fetch_truthsocial.py --debug"
+    "sync": "python scripts/fetch_playwright.py",
+    "sync:truthbrush": "python scripts/fetch_truthsocial.py",
+    "debug:truthsocial": "python scripts/fetch_playwright.py --debug"
   },
   "dependencies": {
     "clsx": "^2.1.1",

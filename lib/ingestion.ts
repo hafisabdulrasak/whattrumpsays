@@ -17,6 +17,8 @@ type CachedPost = {
   media?: Array<{ type: "image" | "video"; url: string; alt?: string }>;
   isReply?: boolean;
   isRepost?: boolean;
+  sharesCount?: number;
+  favouritesCount?: number;
 };
 
 async function readCachedPosts(): Promise<NormalizedPost[]> {
@@ -41,7 +43,9 @@ async function readCachedPosts(): Promise<NormalizedPost[]> {
         isArchive: false,
         metadata: {
           allCapsScore: 0,
-          characterCount: String(item.text ?? "").length
+          characterCount: String(item.text ?? "").length,
+          sharesCount: item.sharesCount ?? 0,
+          favouritesCount: item.favouritesCount ?? 0,
         }
       }))
       .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));

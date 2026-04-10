@@ -1,27 +1,149 @@
 import Link from "next/link";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
-export function Hero() {
+const STATUS_PATH = path.join(process.cwd(), "data", "truthsocial-sync-status.json");
+const DATA_PATH = path.join(process.cwd(), "data", "posts.json");
+
+async function getHeroStats() {
+  try {
+    const [statusRaw, postsRaw] = await Promise.all([
+      fs.readFile(STATUS_PATH, "utf-8").catch(() => ""),
+      fs.readFile(DATA_PATH, "utf-8").catch(() => "[]"),
+    ]);
+    const posts = JSON.parse(postsRaw);
+    const count = Array.isArray(posts) ? posts.length : 0;
+    let syncedAt: string | null = null;
+    if (statusRaw) {
+      const status = JSON.parse(statusRaw);
+      if (status.updatedAt) syncedAt = status.updatedAt;
+    }
+    return { count, syncedAt };
+  } catch {
+    return { count: 0, syncedAt: null };
+  }
+}
+
+function formatSyncTime(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diffMs / 60000);
+  const hours = Math.floor(mins / 60);
+  const days = Math.floor(hours / 24);
+  if (mins < 2) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
+}
+
+export async function Hero() {
+  const { count, syncedAt } = await getHeroStats();
+
   return (
-    <section
-      style={{ backgroundImage: "var(--hero-overlay), linear-gradient(180deg, var(--bg-muted) 0%, var(--surface) 100%)" }}
-      className="rounded-3xl border border-[var(--border)] p-4 shadow-[var(--shadow-soft)] sm:p-7 md:p-10"
-    >
-      <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-[var(--accent)] sm:text-xs">Live Archive Interface</p>
-      <h1 className="text-[1.9rem] font-black leading-tight text-[var(--text-primary)] sm:text-4xl md:text-5xl lg:text-6xl">What Trump Says</h1>
-      <p className="timeline-copy mt-3 text-base leading-7 text-secondary sm:mt-4 sm:text-lg">
-        A reverse-chronological archive of Donald Trump’s public posts.
-      </p>
-      <p className="timeline-copy mt-4 text-sm leading-6 text-muted sm:mt-5">
-        This interface aggregates official and public archival sources, preserves source provenance, and labels every entry by origin.
-      </p>
-      <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
-        <Link href="/timeline" className="focus-ring button-gold inline-flex min-h-11 items-center justify-center rounded-md px-5 py-2 text-sm font-semibold transition">
-          Start Reading
-        </Link>
-        <div className="flex items-center gap-2 text-xs text-muted">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--error)]" aria-hidden />
-          Newest posts auto-prioritized
+    <section className="relative overflow-hidden rounded-3xl border border-[var(--border)] shadow-[var(--shadow-soft)]">
+      {/* Background */}
+      <div
+        className="absolute inset-0 poster-stripes"
+        style={{ backgroundImage: "var(--hero-overlay), linear-gradient(160deg, var(--bg-muted) 0%, var(--surface) 100%)" }}
+      />
+
+      {/* Red top bar */}
+      <div className="relative z-10 bg-[var(--accent)] px-4 py-2 sm:px-7 md:px-10">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--bg)] sm:text-[11px]">
+          ★ Live Archive Interface ★
+        </p>
+      </div>
+
+      {/* Two-column layout */}
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-[1fr_auto]">
+
+        {/* LEFT — main content */}
+        <div className="p-4 sm:p-7 md:p-10">
+          <h1 className="font-display text-[2.2rem] font-black uppercase leading-[0.95] tracking-tight text-[var(--text-primary)] sm:text-5xl md:text-6xl lg:text-7xl">
+            What
+            <br />
+            <span style={{ color: "var(--accent)" }}>Trump</span>
+            <br />
+            Says
+          </h1>
+
+          <div className="mt-4 h-1 w-16 rounded-full sm:mt-5 sm:w-20" style={{ background: "var(--accent-yellow)" }} />
+
+          <p className="mt-4 max-w-sm text-base leading-7 text-[var(--text-secondary)] sm:mt-5 sm:text-lg">
+            A reverse-chronological archive of Donald Trump&apos;s public posts.
+          </p>
+
+          {count > 0 && (
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs">
+              <span
+                className="rounded-sm px-2.5 py-1 font-black tabular-nums tracking-wide"
+                style={{ background: "var(--accent-yellow)", color: "#141414" }}
+              >
+                {count.toLocaleString()} POSTS
+              </span>
+              {syncedAt && (
+                <span className="text-[var(--text-muted)]">synced {formatSyncTime(syncedAt)}</span>
+              )}
+            </div>
+          )}
+
+          <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
+            <Link
+              href="/timeline"
+              className="focus-ring button-gold inline-flex min-h-11 items-center justify-center rounded-sm px-6 py-2.5 text-sm tracking-widest transition"
+            >
+              READ THE RECORD
+            </Link>
+            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]" aria-hidden />
+              Newest posts first
+            </div>
+          </div>
         </div>
+
+        {/* RIGHT — decorative campaign panel */}
+        <div
+          className="hidden md:flex md:flex-col md:items-center md:justify-center md:gap-6 md:border-l md:px-10 md:py-10"
+          style={{ borderColor: "var(--border)", minWidth: "260px" }}
+        >
+          {/* Big post count */}
+          <div className="text-center">
+            <p
+              className="font-display font-black leading-none tabular-nums"
+              style={{ fontSize: "5rem", color: "var(--accent)", lineHeight: 1 }}
+            >
+              {count > 0 ? count : "—"}
+            </p>
+            <p
+              className="mt-1 text-[11px] font-black uppercase tracking-[0.3em]"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Posts Archived
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px w-16" style={{ background: "var(--accent-yellow)" }} />
+
+          {/* Source badge */}
+          <div className="text-center">
+            <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-muted)]">Source</p>
+            <p
+              className="mt-1 font-black uppercase tracking-widest"
+              style={{ color: "var(--text-primary)", fontSize: "13px" }}
+            >
+              Truth Social
+            </p>
+          </div>
+
+          {/* Stars decoration */}
+          <p
+            className="font-black tracking-[0.4em]"
+            style={{ color: "var(--accent)", fontSize: "18px" }}
+          >
+            ★ ★ ★
+          </p>
+        </div>
+
       </div>
     </section>
   );

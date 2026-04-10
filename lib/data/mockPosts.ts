@@ -16,7 +16,7 @@ export const truthSocialMock: NormalizedPost[] = [
     media: [],
     tags: ["rally", "statement"],
     isArchive: false,
-    metadata: { allCapsScore: 0.88, characterCount: 64 }
+    metadata: { allCapsScore: 0.88, characterCount: 64, sharesCount: 0, favouritesCount: 0 }
   },
   {
     id: "ts-2026-0408-002",
@@ -30,7 +30,7 @@ export const truthSocialMock: NormalizedPost[] = [
     media: [],
     tags: ["economy"],
     isArchive: false,
-    metadata: { allCapsScore: 0.24, characterCount: 92 }
+    metadata: { allCapsScore: 0.24, characterCount: 92, sharesCount: 0, favouritesCount: 0 }
   },
   {
     id: "ts-2026-0407-003",
@@ -44,7 +44,7 @@ export const truthSocialMock: NormalizedPost[] = [
     media: [],
     tags: ["slogan"],
     isArchive: false,
-    metadata: { allCapsScore: 1, characterCount: 27 }
+    metadata: { allCapsScore: 0, sharesCount: 0, favouritesCount: 0, characterCount: 27 }
   }
 ];
 
@@ -61,7 +61,7 @@ export const twitterArchiveMock: NormalizedPost[] = [
     media: [],
     tags: ["archive"],
     isArchive: true,
-    metadata: { allCapsScore: 0.08, characterCount: 72 }
+    metadata: { allCapsScore: 0.08, characterCount: 72, sharesCount: 0, favouritesCount: 0 }
   },
   {
     id: "tw-2018-0408-002",
@@ -75,7 +75,7 @@ export const twitterArchiveMock: NormalizedPost[] = [
     media: [],
     tags: ["archive", "media"],
     isArchive: true,
-    metadata: { allCapsScore: 0.91, characterCount: 33 }
+    metadata: { allCapsScore: 0.91, characterCount: 33, sharesCount: 0, favouritesCount: 0 }
   },
   {
     id: "tw-2016-0408-003",
@@ -89,6 +89,6 @@ export const twitterArchiveMock: NormalizedPost[] = [
     media: [],
     tags: ["campaign", "archive"],
     isArchive: true,
-    metadata: { allCapsScore: 0.13, characterCount: 39 }
+    metadata: { allCapsScore: 0.13, characterCount: 39, sharesCount: 0, favouritesCount: 0 }
   }
 ];

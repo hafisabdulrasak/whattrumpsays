@@ -172,7 +172,7 @@ def fetch_truthbrush_cli(debug: bool = False) -> tuple[list[dict[str, Any]], str
         raise RuntimeError(f"Python 3.10+ required, got {sys.version.split()[0]}")
 
     creds, using_token = _load_credentials()
-    cmd = [truthbrush_cmd, "statuses", HANDLE, "--include_reblogs"]
+    cmd = [truthbrush_cmd, "statuses", HANDLE]
     log(f"python version={sys.version.split()[0]}")
     log(f"cwd={Path.cwd()}")
     log(f"resolved output path={OUT_PATH}")
