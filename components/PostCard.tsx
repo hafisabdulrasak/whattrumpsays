@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
 import { NormalizedPost } from "@/lib/types";
 
 function formatAbsoluteDate(isoDate: string) {
@@ -37,14 +36,10 @@ function formatRelativeTime(isoDate: string) {
 }
 
 export function PostCard({ post, index }: { post: NormalizedPost; index: number }) {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
-    <motion.article
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-      animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, delay: Math.min(index * 0.015, 0.14) }}
+    <article
       className="card-surface min-w-0 rounded-2xl p-3.5 transition hover:shadow-[var(--shadow-gold)] sm:p-5 md:p-6"
+      style={{ animationDelay: `${Math.min(index * 0.015, 0.14)}s` }}
     >
       <header className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] text-muted sm:mb-4 sm:gap-2 sm:text-xs">
         <span className="meta-pill rounded-full px-2.5 py-1">{post.sourceLabel}</span>
@@ -78,6 +73,6 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
           </>
         )}
       </footer>
-    </motion.article>
+    </article>
   );
 }
