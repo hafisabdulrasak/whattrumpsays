@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 -c \"import shutil; print\\('truthbrush:', shutil.which\\('truthbrush'\\)\\)\")"
+      "Bash(python3 -c \"import shutil; print\\('truthbrush:', shutil.which\\('truthbrush'\\)\\)\")",
+      "Bash(npm show:*)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d if isinstance\\(d,str\\) else d[-1] if isinstance\\(d,list\\) else 'check manually'\\)\")",
+      "Bash(python -c \"import sys,json; print\\(json.load\\(sys.stdin\\)\\)\")"
     ]
   }
 }
