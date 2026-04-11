@@ -1,6 +1,6 @@
 {
-  "status": "success",
-  "error": null,
-  "count": 61,
-  "updatedAt": "2026-04-10T14:47:05.450458Z"
+  "status": "failed",
+  "error": "Page.goto: net::ERR_NAME_NOT_RESOLVED at https://truthsocial.com/\nCall log:\n  - navigating to \"https://truthsocial.com/\", waiting until \"domcontentloaded\"\n",
+  "count": 0,
+  "updatedAt": "2026-04-11T05:58:06.542582Z"
 }

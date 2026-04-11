@@ -7,6 +7,10 @@ import argparse
 import json
 import os
 import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -20,8 +24,9 @@ LOCAL_CREDENTIALS_PATH = ROOT / "scripts" / "truthsocial.credentials.local.json"
 
 HANDLE = "realDonaldTrump"
 PROFILE_URL = f"https://truthsocial.com/@{HANDLE}"
-MAX_POSTS = 100
-MAX_SCROLL_ROUNDS = 8
+TRUMP_ACCOUNT_ID = "107780257626128497"
+MAX_POSTS = 500
+MAX_SCROLL_ROUNDS = 20
 
 
 def log(msg: str) -> None:
@@ -281,29 +286,123 @@ def fetch_with_playwright(debug: bool = False) -> list[dict[str, Any]]:
     return list(collected.values())
 
 
+def fetch_history_via_api(token: str, since: str = "2026-01-01") -> list[dict[str, Any]]:
+    """Walk backwards through all Truth Social posts using max_id pagination.
+    Stops when posts older than `since` (ISO date string) are encountered.
+    Requires a valid bearer token.
+    """
+    since_ts = datetime.fromisoformat(since).replace(tzinfo=timezone.utc).timestamp()
+    base = f"https://truthsocial.com/api/v1/accounts/{TRUMP_ACCOUNT_ID}/statuses"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/146.0.0.0 Safari/537.36"
+        ),
+        "Accept": "application/json",
+    }
+    all_posts: list[dict[str, Any]] = []
+    max_id: str | None = None
+
+    while True:
+        params: dict[str, str] = {"limit": "40", "exclude_reblogs": "true"}
+        if max_id:
+            params["max_id"] = max_id
+
+        url = f"{base}?{urllib.parse.urlencode(params)}"
+        req = urllib.request.Request(url, headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data: list[dict[str, Any]] = json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            log(f"API error {e.code}: {e.reason} — stopping history fetch")
+            break
+        except Exception as e:
+            log(f"Network error: {e} — stopping history fetch")
+            break
+
+        if not data:
+            break
+
+        page_posts = []
+        stop = False
+        for post in data:
+            created = post.get("created_at", "")
+            try:
+                post_ts = datetime.fromisoformat(created.replace("Z", "+00:00")).timestamp()
+            except ValueError:
+                continue
+            if post_ts < since_ts:
+                stop = True
+                break
+            page_posts.append(post)
+
+        all_posts.extend(page_posts)
+        oldest = data[-1].get("created_at", "")[:10]
+        log(f"history page: +{len(page_posts)} posts | total={len(all_posts)} | oldest={oldest}")
+
+        if stop or len(data) < 40:
+            break
+
+        max_id = data[-1]["id"]
+        time.sleep(0.5)  # rate-limit courtesy
+
+    return all_posts
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--history", action="store_true", help="Deep-fetch all posts since --since date via API")
+    parser.add_argument("--since", default="2026-01-01", help="ISO date to fetch history from (default: 2026-01-01)")
     args = parser.parse_args()
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     try:
-        raw_posts = fetch_with_playwright(debug=args.debug)
+        if args.history:
+            creds = _load_credentials()
+            token = creds.get("token", "")
+            if not token:
+                log("--history requires TRUTHSOCIAL_TOKEN to be set")
+                return 1
+            log(f"fetching history since {args.since} via API pagination")
+            raw_posts = fetch_history_via_api(token, since=args.since)
+        else:
+            raw_posts = fetch_with_playwright(debug=args.debug)
         log(f"total raw posts captured: {len(raw_posts)}")
 
         normalized = [_normalize(p) for p in raw_posts if isinstance(p, dict)]
         normalized = [p for p in normalized if p is not None]
-        normalized.sort(key=lambda p: p["createdAt"], reverse=True)
-        normalized = normalized[:MAX_POSTS]
+        # Merge with existing archive — never lose old posts
+        existing: list[dict[str, Any]] = []
+        if OUT_PATH.exists():
+            try:
+                existing = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+                if not isinstance(existing, list):
+                    existing = []
+                log(f"loaded {len(existing)} existing posts from cache")
+            except Exception:
+                existing = []
 
-        log(f"normalized posts: {len(normalized)}")
-        if normalized:
-            log(f"latest post: {normalized[0]['createdAt']}")
+        # Deduplicate by id — new posts win (updated share/fav counts)
+        merged: dict[str, dict[str, Any]] = {p["id"]: p for p in existing if isinstance(p, dict) and p.get("id")}
+        new_count = 0
+        for p in normalized:
+            if p["id"] not in merged:
+                new_count += 1
+            merged[p["id"]] = p
 
-        _atomic_write(OUT_PATH, normalized)
-        _write_status("success", None, len(normalized))
-        print(json.dumps({"success": True, "count": len(normalized), "output": str(OUT_PATH)}))
+        merged_list = sorted(merged.values(), key=lambda p: p["createdAt"], reverse=True)
+        log(f"merged: {len(merged_list)} total posts ({new_count} new, {len(normalized) - new_count} updated)")
+        if merged_list:
+            log(f"latest post: {merged_list[0]['createdAt']}")
+            log(f"oldest post: {merged_list[-1]['createdAt']}")
+
+        _atomic_write(OUT_PATH, merged_list)
+        _write_status("success", None, len(merged_list))
+        print(json.dumps({"success": True, "count": len(merged_list), "new": new_count, "output": str(OUT_PATH)}))
         return 0
 
     except Exception as exc:

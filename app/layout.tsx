@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "@/app/globals.css";
 import { Header } from "@/components/Header";
+import { ReadingProgress } from "@/components/ReadingProgress";
 import { BackToTopButton } from "@/components/BackToTopButton";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 import { Footer } from "@/components/Footer";
@@ -19,7 +20,8 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   applicationName: siteConfig.name,
   alternates: {
-    canonical: absoluteUrl("/")
+    canonical: absoluteUrl("/"),
+    types: { "application/rss+xml": absoluteUrl("/api/feed.xml") },
   },
   category: "news",
   keywords: ["Trump posts", "Trump Truth Social posts", "Donald Trump timeline", "Trump social media archive"],
@@ -58,6 +60,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#141414" },
     { media: "(prefers-color-scheme: light)", color: "#F5F0E0" }
@@ -82,7 +88,21 @@ const webSiteSchema = {
   name: siteConfig.name,
   url: absoluteUrl("/"),
   description: siteConfig.description,
-  inLanguage: "en-US"
+  inLanguage: "en-US",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${absoluteUrl("/timeline")}?q={search_term_string}` },
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: siteConfig.name,
+  url: absoluteUrl("/"),
+  description: siteConfig.description,
+  logo: { "@type": "ImageObject", url: absoluteUrl("/icon") }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -91,7 +111,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="font-sans text-[var(--text-primary)] antialiased">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(webSiteSchema)} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(organizationSchema)} />
         <ServiceWorkerRegistrar />
+        <ReadingProgress />
         <Header />
         {children}
         <Footer />

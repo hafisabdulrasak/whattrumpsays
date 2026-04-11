@@ -9,7 +9,7 @@ export const siteConfig = {
     "Track Donald Trump's latest public Truth Social posts in a fast, editorial timeline with timestamps, source attribution, and archived history.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_URL,
   locale: "en_US",
-  ogImage: "/og-default.png"
+  ogImage: "/opengraph-image"
 };
 
 export function absoluteUrl(path = "/") {

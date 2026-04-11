@@ -59,9 +59,11 @@ async function readSyncWarning() {
 
 export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams;
-  const limit = Math.min(Math.max(Number(search.get("limit") ?? "12") || 12, 1), 100);
+  const limit = Math.min(Math.max(Number(search.get("limit") ?? "20") || 20, 1), 100);
+  const pageParam = Math.max(Number(search.get("page") ?? "1") || 1, 1);
   const cursor = parseCursor(search.get("cursor") ?? undefined);
   const q = search.get("q")?.trim().toLowerCase() ?? "";
+  const tag = search.get("tag") ?? "";
   const source = search.get("source") ?? "all";
   const startParam = search.get("start") ?? "";
   const endParam = search.get("end") ?? "";
@@ -109,6 +111,11 @@ export async function GET(request: NextRequest) {
     posts = posts.filter((post) => post.text.toLowerCase().includes(q));
   }
 
+  // Tag filter
+  if (tag) {
+    posts = posts.filter((post) => post.tags.includes(tag));
+  }
+
   // Source filter
   if (source && source !== "all") {
     posts = posts.filter((post) => post.source === source);
@@ -129,36 +136,64 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  if (cursor) {
-    posts = posts.filter((post) => {
-      const newerThanCursor = +new Date(post.createdAt) > +new Date(cursor.iso);
-      if (newerThanCursor) return false;
-      if (post.createdAt === cursor.iso && post.id >= cursor.id) return false;
-      return true;
-    });
+  const total = posts.length;
+
+  // Page-based pagination (when no cursor supplied)
+  if (!cursor) {
+    const offset = (pageParam - 1) * limit;
+    const page = posts.slice(offset, offset + limit);
+    const totalPages = Math.ceil(total / limit);
+    const warningDetail = await readSyncWarning();
+
+    return NextResponse.json(
+      {
+        posts: page,
+        nextCursor: null,
+        page: pageParam,
+        totalPages,
+        total,
+        meta: { source: "Truth Social", cached: true, count: parsed.length },
+        sourceStatuses: [
+          {
+            source: "truth_social",
+            available: page.length > 0,
+            detail: warningDetail,
+            checkedAt: new Date().toISOString(),
+          },
+        ],
+      },
+      { status: 200 }
+    );
   }
 
-  const page = posts.slice(0, limit);
-  const nextCursor = posts.length > limit && page.length > 0 ? buildCursor(page[page.length - 1]) : null;
+  // Legacy cursor mode (used internally for sidebar fetches)
+  posts = posts.filter((post) => {
+    const newerThanCursor = +new Date(post.createdAt) > +new Date(cursor.iso);
+    if (newerThanCursor) return false;
+    if (post.createdAt === cursor.iso && post.id >= cursor.id) return false;
+    return true;
+  });
+
+  const cursorPage = posts.slice(0, limit);
+  const nextCursor = posts.length > limit && cursorPage.length > 0 ? buildCursor(cursorPage[cursorPage.length - 1]) : null;
   const warningDetail = await readSyncWarning();
 
   return NextResponse.json(
     {
-      posts: page,
+      posts: cursorPage,
       nextCursor,
-      meta: {
-        source: "Truth Social",
-        cached: true,
-        count: parsed.length
-      },
+      page: 1,
+      totalPages: 1,
+      total,
+      meta: { source: "Truth Social", cached: true, count: parsed.length },
       sourceStatuses: [
         {
           source: "truth_social",
-          available: page.length > 0,
+          available: cursorPage.length > 0,
           detail: warningDetail,
-          checkedAt: new Date().toISOString()
-        }
-      ]
+          checkedAt: new Date().toISOString(),
+        },
+      ],
     },
     { status: 200 }
   );

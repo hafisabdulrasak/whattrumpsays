@@ -11,8 +11,10 @@ const quickRanges = [
   ["archive", "Archive Era"]
 ] as const;
 
+const TAGS = ["Economy", "Immigration", "Media", "Foreign Policy", "Rally", "Legal", "Election"] as const;
+
 export function FiltersBar() {
-  const { q, start, end, quick, setQuery, resetDates } = useTimelineStore();
+  const { q, tag, start, end, quick, setQuery, resetDates } = useTimelineStore();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   return (
@@ -47,6 +49,20 @@ export function FiltersBar() {
               onClick={() => setQuery({ quick: value, start: undefined, end: undefined })}
             >
               {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tag chips — mobile */}
+        <div className="mt-1.5 -mx-1 flex snap-x gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {TAGS.map((t) => (
+            <button
+              key={t}
+              className={`focus-ring shrink-0 snap-start rounded-sm px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition ${tag === t ? "text-[var(--bg)]" : "border border-[var(--border)] text-muted hover:border-[var(--border-strong)]"}`}
+              style={tag === t ? { background: "var(--accent)" } : {}}
+              onClick={() => setQuery({ tag: tag === t ? undefined : t })}
+            >
+              {t}
             </button>
           ))}
         </div>
@@ -139,6 +155,26 @@ export function FiltersBar() {
         <button className="focus-ring rounded-full border border-[var(--border)] px-3 py-1.5 text-xs text-muted hover:border-[var(--border-strong)]" onClick={resetDates}>
           Clear dates
         </button>
+      </div>
+
+      {/* Tag chips — desktop */}
+      <div className="mt-2 hidden flex-wrap items-center gap-1.5 md:flex">
+        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)]">Topics:</span>
+        {TAGS.map((t) => (
+          <button
+            key={t}
+            className={`focus-ring rounded-sm px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition ${tag === t ? "text-[var(--bg)]" : "border border-[var(--border)] text-muted hover:border-[var(--border-strong)]"}`}
+            style={tag === t ? { background: "var(--accent)" } : {}}
+            onClick={() => setQuery({ tag: tag === t ? undefined : t })}
+          >
+            {t}
+          </button>
+        ))}
+        {tag && (
+          <button className="focus-ring text-[10px] text-muted underline-offset-2 hover:underline" onClick={() => setQuery({ tag: undefined })}>
+            clear
+          </button>
+        )}
       </div>
     </section>
   );

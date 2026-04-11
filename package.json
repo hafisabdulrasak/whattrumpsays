@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "sync": "python scripts/fetch_playwright.py",
+    "sync:history": "python scripts/fetch_playwright.py --history --since 2026-01-01",
     "sync:truthbrush": "python scripts/fetch_truthsocial.py",
     "debug:truthsocial": "python scripts/fetch_playwright.py --debug"
   },

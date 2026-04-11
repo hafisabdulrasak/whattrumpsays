@@ -35,8 +35,10 @@ export type ProviderResult = {
 export type FeedQuery = {
   cursor?: string;
   limit?: number;
+  page?: number;
   source?: "all" | PostSource;
   q?: string;
+  tag?: string;
   start?: string;
   end?: string;
   quick?: "today" | "week" | "month" | "archive";

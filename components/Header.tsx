@@ -2,12 +2,37 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallButton } from "@/components/InstallButton";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navLink = (href: string, label: string, mobile = false) => {
+    const active = pathname === href || (href !== "/" && pathname.startsWith(href));
+    return (
+      <Link
+        href={href}
+        onClick={mobile ? () => setMenuOpen(false) : undefined}
+        className={`focus-ring relative transition-colors ${
+          mobile
+            ? `block rounded-xl px-3 py-3 text-sm ${active ? "text-[var(--accent)]" : "text-secondary hover:bg-[var(--surface)]"}`
+            : `rounded-lg px-3 py-2 text-sm ${active ? "text-[var(--accent)]" : "text-secondary hover:bg-[var(--surface)]"}`
+        }`}
+      >
+        {label}
+        {active && !mobile && (
+          <span
+            className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full"
+            style={{ background: "var(--accent)" }}
+          />
+        )}
+      </Link>
+    );
+  };
 
   useEffect(() => {
     const closeOnResize = () => {
@@ -47,12 +72,8 @@ export function Header() {
 
           <nav className="hidden items-center gap-2 text-sm text-secondary md:flex" aria-label="Primary">
             <InstallButton />
-            <Link href="/timeline" className="focus-ring rounded-lg px-3 py-2 hover:bg-[var(--surface)]">
-              Timeline
-            </Link>
-            <Link href="/about" className="focus-ring rounded-lg px-3 py-2 hover:bg-[var(--surface)]">
-              About
-            </Link>
+            {navLink("/timeline", "Timeline")}
+            {navLink("/about", "About")}
           </nav>
         </div>
       </div>
@@ -60,12 +81,8 @@ export function Header() {
       {menuOpen && (
         <div id="mobile-nav" className="border-t border-[var(--border)] bg-[var(--bg-muted)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 md:hidden">
           <nav className="grid gap-1.5 text-sm text-secondary" aria-label="Mobile">
-            <Link href="/timeline" className="focus-ring rounded-xl px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
-              Timeline
-            </Link>
-            <Link href="/about" className="focus-ring rounded-xl px-3 py-3 hover:bg-[var(--surface)]" onClick={() => setMenuOpen(false)}>
-              About
-            </Link>
+            {navLink("/timeline", "Timeline", true)}
+            {navLink("/about", "About", true)}
           </nav>
         </div>
       )}

@@ -56,9 +56,9 @@ export default async function TimelinePage() {
         <FiltersBar />
       </div>
 
-      <section className="mt-4 grid gap-4 sm:mt-5 sm:gap-5 md:mt-6 md:gap-6 xl:grid-cols-[minmax(0,1fr)_300px]" aria-label="Timeline content and context">
+      <section className="mt-4 grid gap-4 sm:mt-5 sm:gap-5 md:mt-6 md:gap-6 lg:grid-cols-[minmax(0,1fr)_300px]" aria-label="Timeline content and context">
         <TimelineFeed initial={initial} />
-        <aside className="order-last xl:order-none xl:block">
+        <aside className="order-last lg:order-none">
           <SidePanel posts={sidebar.posts} />
         </aside>
       </section>

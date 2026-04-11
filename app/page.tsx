@@ -34,14 +34,8 @@ export default async function HomePage() {
 
 <section className="mt-5 grid gap-4 sm:mt-6 sm:gap-5 lg:mt-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6">
         <div className="min-w-0">
-          <div className="mb-3 flex items-center gap-3">
+          <div className="mb-3">
             <h2 className="text-lg font-bold sm:text-xl">Latest Timeline</h2>
-            <span
-              className="rounded-sm px-2 py-0.5 font-bold uppercase tracking-widest"
-              style={{ background: "var(--accent)", color: "var(--bg)", fontSize: "9px" }}
-            >
-              Truth Social
-            </span>
           </div>
           <TimelineFeed initial={initial} />
         </div>

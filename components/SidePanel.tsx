@@ -44,6 +44,34 @@ function MiniPostCard({ post, badge }: { post: NormalizedPost; badge?: React.Rea
   );
 }
 
+const STOP_WORDS = new Set([
+  "the","a","an","and","or","but","in","on","at","to","for","of","with","by","from","is","are",
+  "was","were","be","been","have","has","had","do","does","did","will","would","can","could",
+  "should","not","i","we","they","he","she","it","that","this","these","those","my","our",
+  "your","their","his","her","its","as","so","if","then","than","when","where","who","which",
+  "what","all","just","been","more","very","also","about","up","out","no","there","her","his",
+  "him","me","us","them","you","re","s","t","ll","ve","d","m","don","isn","aren","wasn","weren",
+  "hasn","haven","didn","couldn","wouldn","shouldn","won","into","over","after","before","some",
+  "any","each","every","both","few","how","why","while","during","because","through","between",
+]);
+
+function topWords(posts: NormalizedPost[]): { word: string; count: number }[] {
+  const freq: Record<string, number> = {};
+  posts.forEach((p) => {
+    p.text
+      .toLowerCase()
+      .replace(/[^a-z\s]/g, " ")
+      .split(/\s+/)
+      .forEach((w) => {
+        if (w.length > 3 && !STOP_WORDS.has(w)) freq[w] = (freq[w] ?? 0) + 1;
+      });
+  });
+  return Object.entries(freq)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([word, count]) => ({ word, count }));
+}
+
 function SectionHeader({ label }: { label: string }) {
   return (
     <h3 className="mb-2.5 text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: "var(--accent)" }}>
@@ -73,6 +101,9 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
     if (slot) slot.count++;
   });
   const maxDayCount = Math.max(...days7.map((d) => d.count), 1);
+
+  const words = topWords(posts);
+  const maxWordCount = Math.max(...words.map((w) => w.count), 1);
 
   const avgChars =
     todaysPosts.length > 0
@@ -138,7 +169,35 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
         </div>
       </section>
 
-      {/* 3 — Most Shared */}
+      {/* 3 — Top Words */}
+      {words.length > 0 && (
+        <section className="glass-panel rounded-xl p-4">
+          <SectionHeader label="Top Words" />
+          <div className="space-y-1.5">
+            {words.map(({ word, count }) => (
+              <div key={word} className="flex items-center gap-2">
+                <span className="w-20 shrink-0 truncate text-[11px] font-semibold capitalize text-[var(--text-secondary)]">
+                  {word}
+                </span>
+                <div className="flex-1 overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
+                  <div
+                    className="h-1.5 rounded-full transition-all"
+                    style={{
+                      width: `${Math.round((count / maxWordCount) * 100)}%`,
+                      background: "var(--accent-yellow)",
+                    }}
+                  />
+                </div>
+                <span className="w-6 shrink-0 text-right text-[10px] tabular-nums text-[var(--text-muted)]">
+                  {count}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 4 — Most Shared */}
       <section className="glass-panel rounded-xl p-4">
         <SectionHeader label="Most Shared" />
         <div className="space-y-2">

@@ -31,10 +31,10 @@ function formatRelativeTime(isoDate: string) {
 export function PostCard({ post, index }: { post: NormalizedPost; index: number }) {
   return (
     <article
-      className="card-surface group min-w-0 rounded-xl p-3.5 transition-all duration-200 hover:shadow-[var(--shadow-accent)] sm:p-5 md:p-6"
+      className="post-enter card-surface group min-w-0 rounded-xl p-3.5 transition-all duration-200 hover:shadow-[var(--shadow-accent)] sm:p-5 md:p-6"
       style={{
         borderLeft: "3px solid var(--accent-dim)",
-        animationDelay: `${Math.min(index * 0.015, 0.14)}s`,
+        animationDelay: `${Math.min(index * 0.04, 0.32)}s`,
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.borderLeftColor = "var(--accent)";
@@ -57,6 +57,17 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
             Rapid Fire
           </span>
         )}
+
+        {/* Topic tags */}
+        {post.tags.slice(0, 2).map((t) => (
+          <span
+            key={t}
+            className="rounded-sm border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+            style={{ borderColor: "var(--border-strong)", color: "var(--text-muted)" }}
+          >
+            {t}
+          </span>
+        ))}
 
         {/* Post number — right-aligned */}
         <span
@@ -116,7 +127,7 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
         <span aria-hidden>·</span>
         <Link
           href={`/post/${post.id}`}
-          className="focus-ring inline-flex min-h-9 items-center rounded px-2 text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--accent)] hover:underline"
+          className="focus-ring inline-flex min-h-11 items-center rounded px-2 text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--accent)] hover:underline"
         >
           Detail
         </Link>
@@ -124,7 +135,7 @@ export function PostCard({ post, index }: { post: NormalizedPost; index: number 
           <>
             <span aria-hidden>·</span>
             <a
-              className="focus-ring inline-flex min-h-9 items-center rounded px-2 text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--accent)] hover:underline"
+              className="focus-ring inline-flex min-h-11 items-center rounded px-2 text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--accent)] hover:underline"
               href={post.sourceUrl}
               target="_blank"
               rel="noreferrer"

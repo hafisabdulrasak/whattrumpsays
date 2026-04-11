@@ -6,6 +6,23 @@ import { buildCursor, parseCursor, quickRange } from "@/lib/utils";
 
 const DATA_PATH = path.join(process.cwd(), "data", "posts.json");
 
+const TAG_RULES: Record<string, string[]> = {
+  Economy:          ["tariff","trade","tax","economy","jobs","inflation","market","stock","gdp","deficit","spending","budget","wall street","business"],
+  Immigration:      ["border","immigration","immigrant","migrant","illegal","deportation","wall","ice","asylum","cartel"],
+  Media:            ["fake news","media","cnn","msnbc","nbc","abc","cbs","press","journalist","newspaper","reporter","hoax"],
+  "Foreign Policy": ["china","russia","ukraine","nato","israel","gaza","iran","north korea","saudi","nuclear","war","peace","deal"],
+  Rally:            ["rally","maga","make america","crowd","supporters","thank you","thank u","great crowd"],
+  Legal:            ["court","judge","witch hunt","indictment","trial","verdict","conviction","lawfare","prosecutor","guilty","innocent"],
+  Election:         ["election","vote","ballot","rigged","fraud","stolen","democrat","republican","candidate","primary"],
+};
+
+function detectTags(text: string): string[] {
+  const lower = text.toLowerCase();
+  return Object.entries(TAG_RULES)
+    .filter(([, keywords]) => keywords.some((kw) => lower.includes(kw)))
+    .map(([tag]) => tag);
+}
+
 type CachedPost = {
   id: string;
   text: string;
@@ -39,7 +56,7 @@ async function readCachedPosts(): Promise<NormalizedPost[]> {
         authorName: item.authorName ?? "Donald J. Trump",
         authorHandle: item.authorHandle ?? "@realDonaldTrump",
         media: Array.isArray(item.media) ? item.media : [],
-        tags: [],
+        tags: detectTags(String(item.text ?? "")),
         isArchive: false,
         metadata: {
           allCapsScore: 0,
@@ -58,6 +75,7 @@ function applyFilters(posts: NormalizedPost[], query: FeedQuery) {
   let filtered = posts;
 
   if (query.q) filtered = filtered.filter((post) => post.text.toLowerCase().includes(query.q!.toLowerCase()));
+  if (query.tag) filtered = filtered.filter((post) => post.tags.includes(query.tag!));
   if (query.start) filtered = filtered.filter((post) => +new Date(post.createdAt) >= +new Date(query.start!));
   if (query.end) filtered = filtered.filter((post) => +new Date(post.createdAt) <= +new Date(query.end!));
 
@@ -83,13 +101,20 @@ export const getMergedPosts = unstable_cache(
       });
     }
 
-    const limit = Math.min(query.limit ?? 12, 100);
-    const page = merged.slice(0, limit);
-    const nextCursor = merged.length > limit ? buildCursor(page[page.length - 1]) : null;
+    const limit = Math.min(query.limit ?? 20, 100);
+    const pageNum = Math.max(query.page ?? 1, 1);
+    const total = merged.length;
+    const totalPages = Math.ceil(total / limit);
+    const offset = (pageNum - 1) * limit;
+    const page = merged.slice(offset, offset + limit);
+    const nextCursor = null;
 
     return {
       posts: page,
       nextCursor,
+      page: pageNum,
+      totalPages,
+      total,
       sourceStatuses: [
         {
           source: "truth_social",
@@ -105,6 +130,6 @@ export const getMergedPosts = unstable_cache(
 );
 
 export async function getPostById(id: string): Promise<NormalizedPost | null> {
-  const merged = await getMergedPosts({ source: "all", limit: 200 });
-  return merged.posts.find((post) => post.id === id) ?? null;
+  const all = await readCachedPosts();
+  return all.find((post) => post.id === id) ?? null;
 }

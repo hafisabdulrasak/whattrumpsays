@@ -58,7 +58,7 @@ export async function Hero() {
 
         {/* COL 1 — Title */}
         <div className="p-4 sm:p-7 md:p-10">
-          <h1 className="font-display text-[2.2rem] font-black uppercase leading-[0.95] tracking-tight text-[var(--text-primary)] sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="font-display text-[1.85rem] font-black uppercase leading-[0.95] tracking-tight text-[var(--text-primary)] min-[380px]:text-[2.2rem] sm:text-5xl md:text-6xl lg:text-7xl">
             What
             <br />
             <span style={{ color: "var(--accent)" }}>Trump</span>
