@@ -22,6 +22,14 @@ export function Footer() {
           <Link href="/timeline" className="focus-ring hover:text-[var(--accent)]">Timeline</Link>
           <Link href="/about" className="focus-ring hover:text-[var(--accent)]">Methodology</Link>
           <Link href="/offline" className="focus-ring hover:text-[var(--accent)]">Offline</Link>
+          <a
+            href="https://buymeacoffee.com/hafisabdulrasak"
+            target="_blank"
+            rel="noreferrer"
+            className="focus-ring font-semibold text-[var(--accent)] hover:underline underline-offset-2"
+          >
+            ☕ Buy Me a Coffee
+          </a>
         </nav>
       </div>
     </footer>

@@ -74,6 +74,14 @@ export function Header() {
             <InstallButton />
             {navLink("/timeline", "Timeline")}
             {navLink("/about", "About")}
+            <a
+              href="https://buymeacoffee.com/hafisabdulrasak"
+              target="_blank"
+              rel="noreferrer"
+              className="focus-ring inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold tracking-wide text-[var(--text-primary)] transition hover:border-[var(--accent-yellow)] hover:text-[var(--accent-yellow)]"
+            >
+              ☕ Support
+            </a>
           </nav>
         </div>
       </div>
@@ -83,6 +91,15 @@ export function Header() {
           <nav className="grid gap-1.5 text-sm text-secondary" aria-label="Mobile">
             {navLink("/timeline", "Timeline", true)}
             {navLink("/about", "About", true)}
+            <a
+              href="https://buymeacoffee.com/hafisabdulrasak"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="focus-ring block rounded-xl px-3 py-3 text-sm text-secondary hover:bg-[var(--surface)]"
+            >
+              ☕ Buy Me a Coffee
+            </a>
           </nav>
         </div>
       )}

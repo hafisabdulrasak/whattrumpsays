@@ -98,6 +98,14 @@ export async function Hero() {
             >
               READ THE RECORD
             </Link>
+            <a
+              href="https://buymeacoffee.com/hafisabdulrasak"
+              target="_blank"
+              rel="noreferrer"
+              className="focus-ring inline-flex min-h-11 items-center justify-center gap-1.5 rounded-sm border border-[var(--border)] px-5 py-2.5 text-sm tracking-widest transition hover:border-[var(--accent-yellow)] hover:text-[var(--accent-yellow)]"
+            >
+              ☕ Support
+            </a>
             <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
               <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]" aria-hidden />
               Newest posts first
