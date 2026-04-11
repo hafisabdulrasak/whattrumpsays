@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { FeedQuery, NormalizedPost } from "@/lib/types";
-import { buildCursor, parseCursor, quickRange } from "@/lib/utils";
+import { parseCursor, quickRange } from "@/lib/utils";
 
 const DATA_PATH = path.join(process.cwd(), "data", "posts.json");
 

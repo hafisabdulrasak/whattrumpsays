@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 
-const execFileAsync = promisify(execFile);
 const ROOT = process.cwd();
 const POSTS_PATH = path.join(ROOT, "data", "posts.json");
 const STATUS_PATH = path.join(ROOT, "data", "truthsocial-sync-status.json");
-const PYTHON_CMD = process.platform === "win32" ? "python" : "python3";
 
 export async function GET() {
   const token = process.env.TRUTHSOCIAL_TOKEN?.trim() ?? "";
@@ -43,12 +39,9 @@ export async function GET() {
     }
   }
 
-  const truthbrushInstalled = await execFileAsync(PYTHON_CMD, ["-c", "import shutil; print(bool(shutil.which('truthbrush'))) "]).then(({ stdout }) => stdout.trim() === "True").catch(() => false);
-  const pythonVersion = await execFileAsync(PYTHON_CMD, ["--version"]).then(({ stdout, stderr }) => (stdout || stderr).trim()).catch(() => "unknown");
-
   return NextResponse.json({
-    truthbrushInstalled,
-    pythonVersion,
+    truthbrushInstalled: "n/a (serverless — run sync locally)",
+    pythonVersion: "n/a (serverless)",
     credentialsPresent: Boolean(token) || (Boolean(username) && Boolean(password)),
     usingToken: Boolean(token),
     postsFileExists: Boolean(postsStats),
@@ -56,6 +49,6 @@ export async function GET() {
     parsedPostCount,
     lastModified: postsStats?.mtime.toISOString() ?? null,
     lastSyncStatus,
-    lastSyncError
+    lastSyncError,
   });
 }
