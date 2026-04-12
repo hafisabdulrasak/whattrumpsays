@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "sync": "python scripts/fetch_playwright.py",
+    "sync:rss": "node scripts/fetch_rss.mjs",
     "sync:api": "node scripts/fetch_api.mjs",
     "sync:api:history": "node scripts/fetch_api.mjs --since 2026-01-01",
     "sync:history": "python scripts/fetch_playwright.py --history --since 2026-01-01",

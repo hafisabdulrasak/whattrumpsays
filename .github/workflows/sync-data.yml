@@ -1,13 +1,8 @@
 name: Sync Truth Social Data
 
-# Runs every 2 hours and on manual dispatch.
-# Uses a real Chromium browser (Playwright) to bypass Cloudflare, then
-# commits data/posts.json so Vercel auto-redeploys with fresh content.
-#
-# Required GitHub secrets:
-#   TRUTHSOCIAL_USERNAME  — Truth Social login username
-#   TRUTHSOCIAL_PASSWORD  — Truth Social login password
-#   TRUTHSOCIAL_TOKEN     — (optional) bearer token, skips login if set
+# Fetches posts via the public RSS feed — Cloudflare whitelists RSS crawlers
+# so this works from GitHub Actions without a browser or bearer token.
+# On success, commits data/posts.json and Vercel auto-redeploys.
 
 on:
   schedule:
@@ -15,14 +10,12 @@ on:
   workflow_dispatch:          # allow manual run from the Actions tab
 
 permissions:
-  contents: write             # needed to push updated data
+  contents: write
 
 jobs:
   sync:
     name: Fetch & commit posts
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
     steps:
       - name: Checkout repository
@@ -30,35 +23,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
         with:
-          python-version: "3.11"
+          node-version: "20"
 
-      # playwright install --with-deps pulls the system libs Chromium needs
-      - name: Install Playwright + Chromium
-        run: |
-          pip install playwright
-          playwright install chromium --with-deps
-
-      # The Playwright script launches a real browser, solves the Cloudflare
-      # JS challenge, scrolls the profile page, and intercepts API responses.
-      - name: Fetch latest posts (Playwright browser)
-        env:
-          TRUTHSOCIAL_USERNAME: ${{ secrets.TRUTHSOCIAL_USERNAME }}
-          TRUTHSOCIAL_PASSWORD: ${{ secrets.TRUTHSOCIAL_PASSWORD }}
-          TRUTHSOCIAL_TOKEN:    ${{ secrets.TRUTHSOCIAL_TOKEN }}
-        run: python scripts/fetch_playwright.py
-
-      # Upload browser screenshot if it was saved (only when 0 posts captured)
-      - name: Upload debug screenshot (if captured)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-debug-screenshot
-          path: data/playwright-debug.png
-          if-no-files-found: ignore
-          retention-days: 3
+      # No Python, no Playwright, no Chromium — just a plain HTTP GET to the RSS feed
+      - name: Fetch latest posts (RSS feed)
+        run: node scripts/fetch_rss.mjs
 
       - name: Commit and push if data changed
         run: |
@@ -70,8 +42,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new posts — nothing to commit."
           else
-            COUNT=$(python3 -c "import json; d=json.load(open('data/posts.json')); print(len(d))")
+            COUNT=$(node -e "const d=require('./data/posts.json');console.log(d.length)")
             git commit -m "chore: sync Truth Social data (${COUNT} posts) [skip ci]"
             git push
-            echo "Pushed updated data — Vercel will redeploy automatically."
+            echo "Pushed ${COUNT} posts — Vercel will redeploy automatically."
           fi
