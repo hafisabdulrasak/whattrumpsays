@@ -186,8 +186,10 @@ def fetch_with_playwright(debug: bool = False) -> list[dict[str, Any]]:
                             if isinstance(p, dict) and p.get("id"):
                                 collected[p["id"]] = p
                         log(f"captured {len(data)} posts from {url.split('?')[0]}")
-                except Exception:
-                    pass
+                    else:
+                        log(f"unexpected response shape from {url.split('?')[0]}: {type(data)}")
+                except Exception as exc:
+                    log(f"response parse error for {url.split('?')[0]}: {exc}")
             # Also capture timeline endpoint
             elif "/api/v1/timelines/public" in url or "/api/v1/accounts/realDonaldTrump" in url:
                 try:
@@ -277,9 +279,54 @@ def fetch_with_playwright(debug: bool = False) -> list[dict[str, Any]]:
             except Exception as e:
                 log(f"login attempt failed: {e}")
 
-        if debug:
-            page.screenshot(path=str(DATA_DIR / "playwright-debug.png"))
-            log(f"screenshot saved to {DATA_DIR / 'playwright-debug.png'}")
+        # If scrolling captured nothing, fall back to calling the API directly
+        # from within the browser's JS context — this inherits the cf_clearance cookie
+        # so Cloudflare lets it through even from datacenter IPs.
+        if len(collected) == 0:
+            log("scroll interception captured 0 posts — trying browser-context API fetch")
+            token = creds.get("token", "")
+            try:
+                max_id_js = "null"
+                for page_num in range(5):  # fetch up to 5 pages × 40 = 200 posts
+                    js = f"""
+                    async (maxId) => {{
+                        const params = new URLSearchParams({{ limit: '40' }});
+                        if (maxId) params.set('max_id', maxId);
+                        const headers = {{}};
+                        {f'headers["Authorization"] = "Bearer {token}";' if token else ''}
+                        const res = await fetch(
+                            '/api/v1/accounts/{TRUMP_ACCOUNT_ID}/statuses?' + params.toString(),
+                            {{ headers }}
+                        );
+                        if (!res.ok) {{
+                            const text = await res.text();
+                            return {{ error: res.status, body: text.slice(0, 200) }};
+                        }}
+                        return res.json();
+                    }}
+                    """
+                    data = page.evaluate(js, max_id_js)
+                    if isinstance(data, dict) and "error" in data:
+                        log(f"browser-context API page {page_num+1} error {data['error']}: {data.get('body', '')}")
+                        break
+                    if not isinstance(data, list) or not data:
+                        log(f"browser-context API page {page_num+1}: empty — done")
+                        break
+                    for p in data:
+                        if isinstance(p, dict) and p.get("id"):
+                            collected[p["id"]] = p
+                    log(f"browser-context API page {page_num+1}: +{len(data)} | total={len(collected)}")
+                    max_id_js = data[-1]["id"]
+            except Exception as exc:
+                log(f"browser-context API fallback failed: {exc}")
+
+        # Always save a screenshot in CI (GITHUB_ACTIONS env var is set by GitHub Actions)
+        # so we can inspect what the browser saw when posts are missing.
+        is_ci = bool(os.environ.get("GITHUB_ACTIONS"))
+        if debug or (is_ci and len(collected) == 0):
+            shot_path = str(DATA_DIR / "playwright-debug.png")
+            page.screenshot(path=shot_path)
+            log(f"screenshot saved to {shot_path}")
 
         browser.close()
 

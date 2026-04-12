@@ -50,6 +50,16 @@ jobs:
           TRUTHSOCIAL_TOKEN:    ${{ secrets.TRUTHSOCIAL_TOKEN }}
         run: python scripts/fetch_playwright.py
 
+      # Upload browser screenshot if it was saved (only when 0 posts captured)
+      - name: Upload debug screenshot (if captured)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-debug-screenshot
+          path: data/playwright-debug.png
+          if-no-files-found: ignore
+          retention-days: 3
+
       - name: Commit and push if data changed
         run: |
           git config user.name  "github-actions[bot]"
