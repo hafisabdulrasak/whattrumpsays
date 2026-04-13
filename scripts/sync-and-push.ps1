@@ -1,67 +1,81 @@
 # sync-and-push.ps1
 # ─────────────────────────────────────────────────────────────────────────────
-# Fetches new Truth Social posts on your local machine (bypasses Cloudflare)
-# and pushes data/posts.json to GitHub so Vercel redeploys automatically.
+# Syncs Truth Social posts and pushes to GitHub so Vercel redeploys.
+# Runs from YOUR machine (residential IP) — bypasses Cloudflare.
 #
-# SETUP (one-time):
-#   1. Open Task Scheduler → Create Basic Task
-#   2. Trigger: Daily, repeat every 2 hours
-#   3. Action: Start a program
-#      Program:   powershell.exe
-#      Arguments: -ExecutionPolicy Bypass -File "C:\Users\Administrator\Desktop\RND projects\whattrumpsays-main\scripts\sync-and-push.ps1"
-#      Start in:  C:\Users\Administrator\Desktop\RND projects\whattrumpsays-main
+# Your computer does NOT need to stay on. Use "Wake the computer to run
+# this task" in Task Scheduler and Windows will wake from sleep, sync,
+# then go back to sleep automatically.
+#
+# ── TASK SCHEDULER SETUP (one-time, ~3 minutes) ─────────────────────────────
+#
+#  1. Press Win+S → search "Task Scheduler" → Open
+#  2. Click "Create Task" (right panel, NOT "Create Basic Task")
+#  3. General tab:
+#       Name: WhatTrumpSays Sync
+#       ✓ Run whether user is logged on or not
+#       ✓ Run with highest privileges
+#  4. Triggers tab → New:
+#       Begin the task: On a schedule → Daily
+#       Repeat task every: 4 hours  for a duration of: Indefinitely
+#       ✓ Enabled
+#  5. Actions tab → New:
+#       Program:   powershell.exe
+#       Arguments: -ExecutionPolicy Bypass -WindowStyle Hidden -File "C:\Users\Administrator\Desktop\RND projects\whattrumpsays-main\scripts\sync-and-push.ps1"
+#       Start in:  C:\Users\Administrator\Desktop\RND projects\whattrumpsays-main
+#  6. Conditions tab:
+#       ✓ Wake the computer to run this task    ← KEY SETTING
+#       (uncheck "Start only if on AC power" if on a laptop)
+#  7. Settings tab:
+#       ✓ Run task as soon as possible after a scheduled start is missed
+#  8. Click OK → enter your Windows password if prompted
+#
+# To test immediately: right-click the task → Run
 # ─────────────────────────────────────────────────────────────────────────────
 
 $ErrorActionPreference = "Stop"
-
-$ProjectDir = Split-Path -Parent $PSScriptRoot
+$ProjectDir = "C:\Users\Administrator\Desktop\RND projects\whattrumpsays-main"
 Set-Location $ProjectDir
 
-$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════"
-Write-Host "  Truth Social Sync — $timestamp"
-Write-Host "═══════════════════════════════════════════════"
+Write-Host "=== Truth Social Sync  $ts ==="
 
 try {
-    # 1. Pull latest (handles any remote changes from manual edits)
-    Write-Host ""
-    Write-Host "[1/4] Pulling latest from GitHub..."
-    git pull origin main --rebase --autostash 2>&1 | Write-Host
+    # Pull latest (handles any remote-only changes)
+    Write-Host "[1/4] git pull..."
+    git pull origin main --rebase --autostash 2>&1 | ForEach-Object { Write-Host "      $_" }
 
-    # 2. Run Playwright sync (works here because your home IP isn't blocked)
-    Write-Host ""
-    Write-Host "[2/4] Fetching posts via Playwright..."
-    python scripts/fetch_playwright.py
+    # Fast API sync — no browser needed, works from home IP
+    Write-Host "[2/4] Fetching posts via API..."
+    node scripts/fetch_api.mjs
     if ($LASTEXITCODE -ne 0) {
-        throw "Playwright sync exited with code $LASTEXITCODE"
+        # Fallback: full Playwright browser sync
+        Write-Host "      API sync failed — falling back to Playwright..."
+        python scripts/fetch_playwright.py
+        if ($LASTEXITCODE -ne 0) { throw "Both sync methods failed" }
     }
 
-    # 3. Stage changes
-    Write-Host ""
-    Write-Host "[3/4] Checking for new posts..."
+    # Stage changes
+    Write-Host "[3/4] Checking for changes..."
     git add data/posts.json data/truthsocial-sync-status.json
 
     $staged = git diff --staged --name-only
     if (-not $staged) {
         Write-Host "      No new posts — nothing to commit."
-        Write-Host ""
-        Write-Host "Done."
+        Write-Host "=== Done (no changes) ==="
         exit 0
     }
 
-    # 4. Commit + push
+    # Commit + push
     $count = (Get-Content data/posts.json -Raw | ConvertFrom-Json).Count
-    Write-Host ""
     Write-Host "[4/4] Pushing $count posts to GitHub..."
     git commit -m "chore: sync Truth Social data ($count posts) [skip ci]"
     git push origin main
 
-    Write-Host ""
-    Write-Host "✓ Done — $count posts pushed. Vercel will redeploy in ~30 seconds."
+    Write-Host "=== Done — $count posts live. Vercel redeploys in ~30s ==="
 
 } catch {
-    Write-Host ""
-    Write-Host "✗ Sync failed: $_"
+    Write-Host "ERROR: $_"
     exit 1
 }

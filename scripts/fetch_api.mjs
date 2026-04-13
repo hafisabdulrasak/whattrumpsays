@@ -144,13 +144,9 @@ async function fetchPage(token, params = {}) {
 // ── main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const token = process.env.TRUTHSOCIAL_TOKEN;
-  if (!token) {
-    process.stderr.write(
-      "[api-sync] Error: TRUTHSOCIAL_TOKEN environment variable is required\n"
-    );
-    process.exit(1);
-  }
+  // Token is optional — public accounts are readable without auth from residential IPs.
+  // Set TRUTHSOCIAL_TOKEN for authenticated access (bypasses rate limits, gets more posts).
+  const token = process.env.TRUTHSOCIAL_TOKEN || "";
 
   // Parse optional --since YYYY-MM-DD
   const sinceIdx = process.argv.indexOf("--since");
