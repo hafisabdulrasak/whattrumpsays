@@ -5,3 +5,4 @@ out
 .DS_Store
 npm-debug.log*
 scripts/truthsocial.credentials.local.json
+.claude
