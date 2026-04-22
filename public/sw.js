@@ -1,4 +1,4 @@
-const CACHE_NAME = "wts-shell-v2";
+const CACHE_NAME = "wts-shell-v3";
 const SHELL_ROUTES = ["/", "/timeline", "/about", "/offline", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

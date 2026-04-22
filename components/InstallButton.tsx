@@ -40,7 +40,7 @@ export function InstallButton({ compact = false }: { compact?: boolean }) {
   return (
     <button
       type="button"
-      className={`focus-ring rounded-full border border-[var(--border-strong)] font-medium uppercase tracking-wide text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] ${compact ? "min-h-11 px-3 text-[0.65rem]" : "px-3 py-1.5 text-xs"}`}
+      className={`focus-ring rounded-full border-2 border-white/60 font-bold uppercase tracking-wide text-white transition hover:border-[#F59E0B] hover:text-[#F59E0B] ${compact ? "min-h-11 px-3 text-[0.65rem]" : "px-3 py-1.5 text-xs"}`}
       onClick={async () => {
         await deferredPrompt.prompt();
         await deferredPrompt.userChoice;

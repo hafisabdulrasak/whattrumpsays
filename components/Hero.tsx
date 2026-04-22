@@ -39,54 +39,65 @@ export async function Hero() {
   const { count, syncedAt } = await getHeroStats();
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-[var(--border)] shadow-[var(--shadow-soft)]">
-      {/* Background */}
-      <div
-        className="absolute inset-0 poster-stripes"
-        style={{ backgroundImage: "var(--hero-overlay), linear-gradient(160deg, var(--bg-muted) 0%, var(--surface) 100%)" }}
-      />
+    <section className="relative overflow-hidden poster-stripes">
 
-      {/* Red top bar */}
-      <div className="relative z-10 bg-[var(--accent)] px-4 py-2 sm:px-7 md:px-10">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--bg)] sm:text-[11px]">
-          ★ Live Archive Interface ★
+      {/* Section label — Zohran-style divider */}
+      <div className="flex items-center justify-center gap-3 px-4 pt-8 pb-0">
+        <div className="h-[2px] w-16 bg-[#E11D48]" />
+        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E11D48]">
+          The Archive
         </p>
+        <div className="h-[2px] w-16 bg-[#E11D48]" />
       </div>
 
       {/* 3-column on desktop, stacked on mobile */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto]">
 
         {/* COL 1 — Title */}
-        <div className="p-4 sm:p-7 md:p-10">
-          <h1 className="font-display text-[1.85rem] font-black uppercase leading-[0.95] tracking-tight text-[var(--text-primary)] min-[380px]:text-[2.2rem] sm:text-5xl md:text-6xl lg:text-7xl">
+        <div className="p-6 sm:p-8 md:p-10">
+          <h1
+            className="uppercase leading-[0.92] tracking-[0.02em] text-[#2D2AA6]"
+            style={{
+              fontFamily: "var(--font-display, Anton, Impact, sans-serif)",
+              fontSize: "clamp(3rem, 8vw, 6rem)",
+            }}
+          >
             What
             <br />
-            <span style={{ color: "var(--accent)" }}>Trump</span>
+            <span className="text-[#E11D48]">Trump</span>
             <br />
-            Says
+            Says.
           </h1>
         </div>
 
-        {/* COL 2 — Description + CTA (fills the empty space) */}
-        <div
-          className="flex flex-col justify-center border-[var(--border)] p-4 sm:p-7 md:border-l md:border-r md:p-10"
-        >
-          <div className="h-1 w-14 rounded-full" style={{ background: "var(--accent-yellow)" }} />
+        {/* COL 2 — Description + CTA */}
+        <div className="flex flex-col justify-center border-[rgba(45,42,166,0.2)] p-6 sm:p-8 md:border-l md:border-r md:p-10">
 
-          <p className="mt-4 text-base leading-7 text-[var(--text-secondary)] sm:text-lg">
-            A reverse-chronological archive of Donald Trump&apos;s public posts.
+          {/* Yellow bar accent */}
+          <div className="mb-4 h-1 w-12 rounded-full bg-[#2D2AA6]" />
+
+          <p
+            className="leading-tight text-[#1F2937]"
+            style={{
+              fontFamily: "var(--font-display, Anton, sans-serif)",
+              fontSize: "clamp(1.25rem, 3vw, 1.75rem)",
+              letterSpacing: "0.01em",
+            }}
+          >
+            See what Trump actually said.
+          </p>
+
+          <p className="mt-3 text-base font-medium leading-7 text-[#1F2937]/70 sm:text-lg">
+            Not headlines. Not opinions. Just the original posts.
           </p>
 
           {count > 0 && (
             <div className="mt-4 flex flex-wrap items-center gap-3 text-xs">
-              <span
-                className="rounded-sm px-2.5 py-1 font-black tabular-nums tracking-wide"
-                style={{ background: "var(--accent-yellow)", color: "#141414" }}
-              >
+              <span className="rounded bg-[#2D2AA6] px-3 py-1.5 font-black tabular-nums tracking-wide text-[#F59E0B]">
                 {count.toLocaleString()} POSTS
               </span>
               {syncedAt && (
-                <span className="text-[var(--text-muted)]">synced {formatSyncTime(syncedAt)}</span>
+                <span className="text-[#1F2937]/60">synced {formatSyncTime(syncedAt)}</span>
               )}
             </div>
           )}
@@ -94,52 +105,48 @@ export async function Hero() {
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/timeline"
-              className="focus-ring button-gold inline-flex min-h-11 items-center justify-center rounded-sm px-6 py-2.5 text-sm tracking-widest transition"
+              className="focus-ring button-gold inline-flex min-h-11 items-center justify-center px-6 py-2.5 text-sm tracking-[0.12em]"
             >
-              READ THE RECORD
+              See today&apos;s posts
             </Link>
-            <a
-              href="https://buymeacoffee.com/hafisabdulrasak"
-              target="_blank"
-              rel="noreferrer"
-              className="focus-ring inline-flex min-h-11 items-center justify-center gap-1.5 rounded-sm border border-[var(--border)] px-5 py-2.5 text-sm tracking-widest transition hover:border-[var(--accent-yellow)] hover:text-[var(--accent-yellow)]"
-            >
-              ☕ Support
-            </a>
-            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]" aria-hidden />
-              Newest posts first
-            </div>
           </div>
+
+          <p className="mt-4 text-[11px] text-[#1F2937]/45">
+            Live feed from Truth Social&nbsp;•&nbsp;No spin&nbsp;•&nbsp;Share anything instantly
+          </p>
         </div>
 
-        {/* COL 3 — Stats panel */}
+        {/* COL 3 — Stats panel (desktop) */}
         <div
-          className="hidden md:flex md:flex-col md:items-center md:justify-center md:gap-6 md:px-10 md:py-10"
+          className="hidden bg-[#2D2AA6] md:flex md:flex-col md:items-center md:justify-center md:gap-6 md:px-10 md:py-10"
           style={{ minWidth: "200px" }}
         >
           <div className="text-center">
             <p
-              className="font-display font-black leading-none tabular-nums"
-              style={{ fontSize: "5rem", color: "var(--accent)", lineHeight: 1 }}
+              className="tabular-nums leading-none text-[#F59E0B]"
+              style={{
+                fontFamily: "var(--font-display, Anton, sans-serif)",
+                fontSize: "5rem",
+                lineHeight: 1,
+              }}
             >
               {count > 0 ? count : "—"}
             </p>
-            <p className="mt-1 text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)]">
+            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.25em] text-white/60">
               Posts Archived
             </p>
           </div>
 
-          <div className="h-px w-16" style={{ background: "var(--accent-yellow)" }} />
+          <div className="h-px w-12 bg-[rgba(245,158,11,0.4)]" />
 
           <div className="text-center">
-            <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-muted)]">Source</p>
-            <p className="mt-1 text-[13px] font-black uppercase tracking-widest text-[var(--text-primary)]">
+            <p className="text-[9px] font-black uppercase tracking-[0.25em] text-white/50">Source</p>
+            <p className="mt-1 text-[13px] font-black uppercase tracking-widest text-white">
               Truth Social
             </p>
           </div>
 
-          <p className="font-black tracking-[0.4em] text-[var(--accent)]" style={{ fontSize: "18px" }}>
+          <p className="tracking-[0.4em] text-[#F59E0B]" style={{ fontSize: "18px" }}>
             ★ ★ ★
           </p>
         </div>

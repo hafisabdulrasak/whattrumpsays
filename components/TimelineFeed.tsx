@@ -59,28 +59,19 @@ function formatGap(hours: number): string {
 function DateMarker({ label }: { label: string }) {
   return (
     <>
-      {/* Mobile: horizontal rule with date centred */}
+      {/* Mobile */}
       <div className="flex items-center gap-3 py-1 sm:hidden">
-        <div className="h-px flex-1 bg-[var(--border)]" />
-        <span
-          className="rounded-sm px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.25em]"
-          style={{ background: "var(--accent)", color: "var(--bg)" }}
-        >
+        <div className="h-px flex-1 bg-[rgba(45,42,166,0.2)]" />
+        <span className="rounded bg-[#2D2AA6] px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-[#F59E0B]">
           {label}
         </span>
-        <div className="h-px flex-1 bg-[var(--border)]" />
+        <div className="h-px flex-1 bg-[rgba(45,42,166,0.2)]" />
       </div>
 
-      {/* Desktop: diamond + red pill label */}
+      {/* Desktop */}
       <div className="relative hidden py-1 pl-9 sm:flex sm:items-center">
-        <div
-          className="absolute left-[6px] h-3 w-3 rotate-45 border-2"
-          style={{ borderColor: "var(--accent)", backgroundColor: "var(--bg)" }}
-        />
-        <span
-          className="rounded-sm px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.25em]"
-          style={{ background: "var(--accent)", color: "var(--bg)" }}
-        >
+        <div className="absolute left-[6px] h-3 w-3 rotate-45 border-2 border-[#2D2AA6] bg-[#F59E0B]" />
+        <span className="rounded bg-[#2D2AA6] px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.25em] text-[#F59E0B]">
           {label}
         </span>
       </div>
@@ -91,11 +82,8 @@ function DateMarker({ label }: { label: string }) {
 function TimeGapMarker({ hours }: { hours: number }) {
   return (
     <div className="relative hidden h-7 pl-9 sm:block">
-      <div
-        className="absolute left-[11px] top-0 h-full w-px"
-        style={{ background: "var(--accent-dim)" }}
-      />
-      <span className="flex h-full items-center text-[9px] tabular-nums text-muted/50">
+      <div className="absolute left-[11px] top-0 h-full w-px bg-[rgba(45,42,166,0.2)]" />
+      <span className="flex h-full items-center text-[9px] tabular-nums text-[#1F2937]/40">
         {formatGap(hours)}
       </span>
     </div>
@@ -131,17 +119,16 @@ function Pagination({
 
   return (
     <div className="mt-8 flex flex-col items-center gap-4">
-      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">
-        Page <span className="text-[var(--text-primary)]">{page}</span> of{" "}
-        <span className="text-[var(--text-primary)]">{totalPages}</span>
+      <p className="text-[10px] font-black uppercase tracking-widest text-[#1F2937]/50">
+        Page <span className="text-[#2D2AA6]">{page}</span> of{" "}
+        <span className="text-[#2D2AA6]">{totalPages}</span>
         <span className="mx-2 opacity-40">·</span>
-        <span className="tabular-nums" style={{ color: "var(--accent)" }}>{total.toLocaleString()}</span> posts
+        <span className="tabular-nums text-[#E11D48]">{total.toLocaleString()}</span> posts
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-1.5">
         <button
-          className="focus-ring inline-flex min-h-[44px] items-center gap-1 rounded-sm px-4 text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-30"
-          style={{ background: "var(--accent)", color: "var(--bg)" }}
+          className="focus-ring inline-flex min-h-[44px] items-center gap-1 rounded px-4 text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-30 bg-[#E11D48] text-white hover:bg-[#2D2AA6]"
           disabled={page === 1 || loading}
           onClick={() => onChange(page - 1)}
         >
@@ -150,15 +137,15 @@ function Pagination({
 
         {pages.map((p, i) =>
           p === "…" ? (
-            <span key={`ellipsis-${i}`} className="px-1 text-xs text-[var(--text-muted)]">…</span>
+            <span key={`ellipsis-${i}`} className="px-1 text-xs text-[#1F2937]/40">…</span>
           ) : (
             <button
               key={p}
-              className="focus-ring inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm text-xs font-black tabular-nums transition-all"
+              className="focus-ring inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-xs font-black tabular-nums transition-all"
               style={
                 p === page
-                  ? { background: "var(--accent-yellow)", color: "#141414" }
-                  : { background: "var(--surface-elevated)", color: "var(--text-secondary)", border: "1px solid var(--border)" }
+                  ? { background: "#2D2AA6", color: "#F59E0B" }
+                  : { background: "#fff", color: "#1F2937", border: "1px solid rgba(45,42,166,0.2)" }
               }
               disabled={loading}
               onClick={() => onChange(p)}
@@ -169,8 +156,7 @@ function Pagination({
         )}
 
         <button
-          className="focus-ring inline-flex min-h-[44px] items-center gap-1 rounded-sm px-4 text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-30"
-          style={{ background: "var(--accent)", color: "var(--bg)" }}
+          className="focus-ring inline-flex min-h-[44px] items-center gap-1 rounded px-4 text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-30 bg-[#E11D48] text-white hover:bg-[#2D2AA6]"
           disabled={page === totalPages || loading}
           onClick={() => onChange(page + 1)}
         >

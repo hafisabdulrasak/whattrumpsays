@@ -2,56 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Campaign Theme: Orange dominant, Deep Blue accents, White panels ── */
 :root {
-  color-scheme: dark;
-  --bg: #141414;
-  --bg-muted: #1c1c1c;
-  --surface: #1e1e1e;
-  --surface-elevated: #272727;
-  --text-primary: #F5F0E0;
-  --text-secondary: #D9D4C4;
-  --text-muted: #8a8680;
-  --accent: #E8561A;
-  --accent-yellow: #FFD000;
-  --accent-soft: #3a1205;
-  --border: #2e2e2e;
-  --border-strong: #484848;
-  --success: #28a745;
-  --warning: #FFD000;
-  --error: #E8561A;
-  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.5);
-  --shadow-accent: 0 0 0 1px rgba(232, 86, 26, 0.5), 0 20px 55px rgba(0, 0, 0, 0.55);
-  --hero-overlay: radial-gradient(ellipse at top left, rgba(232, 86, 26, 0.22), transparent 55%),
-                  radial-gradient(ellipse at bottom right, rgba(255, 208, 0, 0.09), transparent 50%);
-  --accent-dim: rgba(232, 86, 26, 0.5);
-  --accent-bright: rgba(232, 86, 26, 0.9);
-  --halftone: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
-}
-
-html.light {
   color-scheme: light;
-  --bg: #F5F0E0;
-  --bg-muted: #EDE8D7;
-  --surface: #FAF7ED;
-  --surface-elevated: #FFFFFF;
-  --text-primary: #141414;
-  --text-secondary: #2e2e2e;
-  --text-muted: #666660;
-  --accent: #CC4510;
-  --accent-yellow: #D4A000;
-  --accent-soft: #FDE8DF;
-  --border: #D9D4C4;
-  --border-strong: #B8B2A0;
-  --success: #1f8a67;
-  --warning: #B8920A;
-  --error: #CC4510;
-  --shadow-soft: 0 16px 32px rgba(20, 20, 20, 0.1);
-  --shadow-accent: 0 0 0 1px rgba(204, 69, 16, 0.3), 0 12px 40px rgba(20, 20, 20, 0.12);
-  --hero-overlay: radial-gradient(ellipse at top left, rgba(204, 69, 16, 0.12), transparent 55%),
-                  radial-gradient(ellipse at bottom right, rgba(212, 160, 0, 0.08), transparent 50%);
-  --accent-dim: rgba(204, 69, 16, 0.45);
-  --accent-bright: rgba(204, 69, 16, 0.9);
-  --halftone: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+  --bg:               #F59E0B;
+  --bg-muted:         #e8920a;
+  --surface:          #ffffff;
+  --surface-elevated: #F5F5F5;
+  --text-primary:     #2D2AA6;
+  --text-secondary:   #1F2937;
+  --text-muted:       #6B7280;
+  --accent:           #E11D48;
+  --accent-blue:      #2D2AA6;
+  --accent-orange:    #F59E0B;
+  --accent-soft:      rgba(225,29,72,0.08);
+  --border:           rgba(45,42,166,0.15);
+  --border-strong:    rgba(45,42,166,0.30);
+  --success:          #059669;
+  --warning:          #D97706;
+  --error:            #E11D48;
+  --shadow-soft:      0 4px 20px rgba(45,42,166,0.10);
+  --shadow-accent:    0 0 0 2px rgba(245,158,11,0.5), 0 8px 24px rgba(45,42,166,0.15);
+  --hero-overlay:     none;
+  --accent-dim:       rgba(225,29,72,0.40);
+  --accent-bright:    rgba(225,29,72,0.90);
+  --halftone:         repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 4px, transparent 4px, transparent 14px);
 }
 
 html,
@@ -70,7 +45,6 @@ body {
   font-feature-settings: "ss01" on, "cv01" on;
   line-height: 1.5;
   text-rendering: optimizeLegibility;
-  transition: background-color 240ms ease, color 240ms ease;
 }
 
 #__next {
@@ -78,9 +52,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -90,12 +62,12 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) var(--bg);
+  scrollbar-color: rgba(45,42,166,0.3) rgba(245,158,11,0.2);
 }
 
 ::selection {
-  background: rgba(232, 86, 26, 0.28);
-  color: var(--text-primary);
+  background: rgba(45,42,166,0.20);
+  color: #1F2937;
 }
 
 @keyframes slideUp {
@@ -109,14 +81,16 @@ body {
 }
 
 @layer components {
+
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D2AA6] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)];
   }
 
+  /* White panel floating on orange bg */
   .glass-panel {
+    background: var(--surface);
     border: 1px solid var(--border);
-    background: linear-gradient(135deg, color-mix(in oklab, var(--surface) 92%, transparent), color-mix(in oklab, var(--surface-elevated) 86%, transparent));
-    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-soft);
   }
 
   .text-muted {
@@ -141,22 +115,24 @@ body {
     max-width: 72ch;
   }
 
-  /* Campaign button — red fill, cream text */
+  /* Primary CTA — red fill, white text */
   .button-gold {
     background: var(--accent);
-    color: var(--bg);
+    color: #ffffff;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    border-radius: 4px;
+    transition: background 0.15s;
   }
-
   .button-gold:hover {
-    filter: brightness(1.1);
+    background: var(--accent-blue);
   }
 
+  /* Secondary outlined pill */
   .meta-pill {
-    border: 1px solid var(--border);
-    background: color-mix(in oklab, var(--surface-elevated) 88%, transparent);
+    border: 1.5px solid var(--border-strong);
+    background: var(--surface);
     color: var(--text-secondary);
   }
 
@@ -167,32 +143,44 @@ body {
   .skeleton-shimmer {
     background: linear-gradient(
       90deg,
-      var(--surface-elevated) 25%,
-      color-mix(in oklab, var(--accent) 8%, var(--surface-elevated)) 50%,
-      var(--surface-elevated) 75%
+      #f0f0f0 25%,
+      #e0e0e0 50%,
+      #f0f0f0 75%
     );
     background-size: 200% 100%;
     animation: shimmer 1.6s ease-in-out infinite;
   }
 
-  /* Campaign poster stripe pattern */
+  /* Diagonal stripe overlay for hero areas */
   .poster-stripes {
     background-image: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 6px,
-      rgba(232, 39, 29, 0.06) 6px,
-      rgba(232, 39, 29, 0.06) 7px
+      45deg,
+      rgba(255,255,255,0.06) 0px,
+      rgba(255,255,255,0.06) 4px,
+      transparent 4px,
+      transparent 14px
     );
   }
 
-  html.light .poster-stripes {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 6px,
-      rgba(204, 31, 22, 0.05) 6px,
-      rgba(204, 31, 22, 0.05) 7px
-    );
+  /* Red horizontal rule label — matches Zohran "THE PLATFORM" style */
+  .section-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: var(--font-body), Inter, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .section-label::before,
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 2px;
+    background: var(--accent);
   }
 }

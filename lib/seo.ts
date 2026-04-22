@@ -20,14 +20,17 @@ export function buildMetadata({
   title,
   description,
   path,
-  type = "website"
+  type = "website",
+  ogImage,
 }: {
   title: string;
   description: string;
   path: string;
   type?: "website" | "article";
+  ogImage?: string;
 }): Metadata {
   const canonical = absoluteUrl(path);
+  const imageUrl = absoluteUrl(ogImage ?? siteConfig.ogImage);
 
   return {
     title,
@@ -42,7 +45,7 @@ export function buildMetadata({
       type,
       images: [
         {
-          url: absoluteUrl(siteConfig.ogImage),
+          url: imageUrl,
           width: 1200,
           height: 630,
           alt: `${siteConfig.name} preview`
@@ -53,7 +56,7 @@ export function buildMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [absoluteUrl(siteConfig.ogImage)]
+      images: [imageUrl]
     }
   };
 }

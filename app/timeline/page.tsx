@@ -37,16 +37,13 @@ export default async function TimelinePage() {
     <main className="page-shell">
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(timelineSchema)} />
       <header>
-        <h1 className="text-2xl font-black leading-tight text-[var(--text-primary)] sm:text-3xl">Donald Trump Post Timeline</h1>
-        <p className="timeline-copy mt-2 text-sm leading-6 text-secondary">
+        <h1 className="text-2xl font-black leading-tight text-[#2D2AA6] sm:text-3xl">Donald Trump Post Timeline</h1>
+        <p className="timeline-copy mt-2 text-sm leading-6 text-[#1F2937]">
           Browse the latest public posts in strict reverse chronology. Use filters to narrow by timeframe while keeping source provenance and timestamps visible.
         </p>
-        <p className="mt-1.5 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+        <p className="mt-1.5 flex items-center gap-1.5 text-xs text-[#6B7280]">
           <span>Source:</span>
-          <span
-            className="rounded-sm px-2 py-0.5 font-bold uppercase tracking-widest"
-            style={{ background: "var(--accent)", color: "var(--bg)", fontSize: "9px" }}
-          >
+          <span className="rounded-sm bg-[#E11D48] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">
             Truth Social
           </span>
         </p>
@@ -58,7 +55,7 @@ export default async function TimelinePage() {
 
       <section className="mt-4 grid gap-4 sm:mt-5 sm:gap-5 md:mt-6 md:gap-6 lg:grid-cols-[minmax(0,1fr)_300px]" aria-label="Timeline content and context">
         <TimelineFeed initial={initial} />
-        <aside className="order-last lg:order-none">
+        <aside className="hidden lg:block">
           <SidePanel posts={sidebar.posts} />
         </aside>
       </section>

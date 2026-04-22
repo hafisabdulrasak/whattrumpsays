@@ -28,7 +28,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: `${format(new Date(post.createdAt), "PPP")}: ${excerpt(post.text, 58)}`,
     description: `${excerpt(post.text, 150)} Source: ${post.sourceLabel}.`,
     path: `/post/${post.id}`,
-    type: "article"
+    type: "article",
+    ogImage: `/post/${post.id}/opengraph-image`,
   });
 }
 

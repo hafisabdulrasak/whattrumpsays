@@ -398,17 +398,128 @@ def fetch_history_via_api(token: str, since: str = "2026-01-01") -> list[dict[st
     return all_posts
 
 
+def fetch_deep_via_browser(since: str = "2022-02-01") -> list[dict[str, Any]]:
+    """Full backfill using Playwright browser for CF clearance, then paginating
+    the API via browser JS context (inherits cf_clearance cookie).
+    Goes all the way back to `since` date."""
+    from playwright.sync_api import sync_playwright
+
+    since_ts = int(datetime.fromisoformat(since).replace(tzinfo=timezone.utc).timestamp() * 1000)
+    creds = _load_credentials()
+    token = creds.get("token", "")
+    collected: dict[str, dict[str, Any]] = {}
+
+    log(f"launching browser for deep backfill since {since}")
+
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+        )
+        context = browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1280, "height": 900},
+            locale="en-US",
+        )
+        context.add_init_script(
+            "Object.defineProperty(navigator, 'webdriver', { get: () => undefined });"
+        )
+        page = context.new_page()
+
+        # Get CF clearance by loading the profile page
+        log(f"loading {PROFILE_URL} to get Cloudflare clearance...")
+        try:
+            page.goto(PROFILE_URL, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_function(
+                "() => !document.title.toLowerCase().includes('just a moment') && document.readyState === 'complete'",
+                timeout=25000,
+            )
+        except Exception as e:
+            log(f"page load warning: {e}")
+        page.wait_for_timeout(4000)
+        log(f"page title: {page.title()} — CF cleared, starting API pagination")
+
+        # Paginate from the browser JS context (uses cf_clearance cookie)
+        max_id = None
+        page_num = 0
+        stop = False
+
+        while not stop and page_num < 300:
+            page_num += 1
+            params = f"limit=40{'&max_id=' + max_id if max_id else ''}"
+            auth_header = f'"Authorization": "Bearer {token}",' if token else ""
+            js = f"""
+            async () => {{
+                const res = await fetch(
+                    '/api/v1/accounts/{TRUMP_ACCOUNT_ID}/statuses?{{}}'.replace('{{}}', '{params}'),
+                    {{ headers: {{ {auth_header} 'Accept': 'application/json' }} }}
+                );
+                if (!res.ok) return {{ error: res.status, body: (await res.text()).slice(0, 200) }};
+                return res.json();
+            }}
+            """
+            try:
+                data = page.evaluate(js)
+            except Exception as exc:
+                log(f"page {page_num}: JS error — {exc}")
+                break
+
+            if isinstance(data, dict) and "error" in data:
+                log(f"page {page_num}: API error {data['error']}: {data.get('body', '')} — stopping")
+                break
+            if not isinstance(data, list) or not data:
+                log(f"page {page_num}: empty response — done")
+                break
+
+            added = 0
+            for post in data:
+                if not isinstance(post, dict) or not post.get("id"):
+                    continue
+                created_at = post.get("created_at", "")
+                try:
+                    post_ms = int(datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp() * 1000)
+                except Exception:
+                    post_ms = 0
+                if post_ms < since_ts:
+                    stop = True
+                    break
+                collected[post["id"]] = post
+                added += 1
+
+            oldest = data[-1].get("created_at", "")[:10] if data else "?"
+            log(f"page {page_num}: +{added} posts | total={len(collected)} | oldest={oldest}")
+
+            if stop:
+                log(f"reached since={since}, stopping")
+                break
+
+            max_id = data[-1]["id"]
+            page.wait_for_timeout(600)  # polite pause
+
+        browser.close()
+
+    log(f"deep backfill complete: {len(collected)} posts captured")
+    return list(collected.values())
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--history", action="store_true", help="Deep-fetch all posts since --since date via API")
-    parser.add_argument("--since", default="2026-01-01", help="ISO date to fetch history from (default: 2026-01-01)")
+    parser.add_argument("--history", action="store_true", help="Deep-fetch via direct API (requires token, may hit CF)")
+    parser.add_argument("--deep", action="store_true", help="Full backfill via browser JS context (bypasses CF)")
+    parser.add_argument("--since", default="2022-02-01", help="ISO date to fetch history from (default: 2022-02-01)")
     args = parser.parse_args()
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     try:
-        if args.history:
+        if args.deep:
+            log(f"starting deep backfill since {args.since}")
+            raw_posts = fetch_deep_via_browser(since=args.since)
+        elif args.history:
             creds = _load_credentials()
             token = creds.get("token", "")
             if not token:

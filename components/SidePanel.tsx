@@ -19,26 +19,26 @@ function MiniPostCard({ post, badge }: { post: NormalizedPost; badge?: React.Rea
   return (
     <Link
       href={`/post/${post.id}`}
-      className="group block rounded-lg p-3 transition-all duration-150 hover:shadow-[var(--shadow-accent)]"
+      className="group block rounded-lg p-3 transition-all duration-150 hover:shadow-[0_2px_12px_rgba(45,42,166,0.12)]"
       style={{
-        background: "var(--surface-elevated)",
-        border: "1px solid var(--border)",
-        borderLeft: "3px solid var(--accent-dim)",
+        background: "#fff",
+        border: "1px solid rgba(45,42,166,0.15)",
+        borderLeft: "3px solid #F59E0B",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.borderLeftColor = "var(--accent)";
+        (e.currentTarget as HTMLElement).style.borderLeftColor = "#E11D48";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.borderLeftColor = "var(--accent-dim)";
+        (e.currentTarget as HTMLElement).style.borderLeftColor = "#F59E0B";
       }}
     >
       {badge && <div className="mb-1.5">{badge}</div>}
-      <p className="line-clamp-3 text-xs leading-5 text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">
+      <p className="line-clamp-3 text-xs leading-5 text-[#1F2937]">
         {post.text}
       </p>
-      <p className="mt-1.5 text-[10px] text-[var(--text-muted)]">
+      <p className="mt-1.5 text-[10px] text-[#6B7280]">
         {relativeTime(post.createdAt)}
-        <span className="ml-2 text-[var(--text-muted)]/60">{post.metadata.characterCount} chars</span>
+        <span className="ml-2 opacity-60">{post.metadata.characterCount} chars</span>
       </p>
     </Link>
   );
@@ -74,7 +74,7 @@ function topWords(posts: NormalizedPost[]): { word: string; count: number }[] {
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <h3 className="mb-2.5 text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: "var(--accent)" }}>
+    <h3 className="mb-2.5 text-[10px] font-black uppercase tracking-[0.25em] text-[#2D2AA6]">
       {label}
     </h3>
   );
@@ -114,26 +114,26 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
     <aside className="space-y-4">
 
       {/* 1 — Today at a Glance */}
-      <section className="glass-panel rounded-xl p-4">
+      <section className="rounded-xl bg-white p-4 shadow-[0_2px_12px_rgba(45,42,166,0.08)]">
         <SectionHeader label="Today at a Glance" />
         <div className="flex items-end gap-4">
           <div>
-            <p className="font-display text-4xl font-black tabular-nums leading-none" style={{ color: "var(--accent-yellow)" }}>
+            <p className="font-display text-4xl font-black tabular-nums leading-none text-[#F59E0B]">
               {todaysPosts.length}
             </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">posts today</p>
+            <p className="mt-0.5 text-[10px] uppercase tracking-wider text-[#6B7280]">posts today</p>
           </div>
           {avgChars > 0 && (
             <div className="mb-0.5">
-              <p className="text-lg font-black tabular-nums leading-none text-[var(--text-primary)]">{avgChars}</p>
-              <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">avg chars</p>
+              <p className="text-lg font-black tabular-nums leading-none text-[#2D2AA6]">{avgChars}</p>
+              <p className="text-[10px] uppercase tracking-wider text-[#6B7280]">avg chars</p>
             </div>
           )}
         </div>
       </section>
 
       {/* 2 — Activity Last Week */}
-      <section className="glass-panel rounded-xl p-4">
+      <section className="rounded-xl bg-white p-4 shadow-[0_2px_12px_rgba(45,42,166,0.08)]">
         <SectionHeader label="Activity Last Week" />
         <div className="flex h-16 gap-1">
           {days7.map((day) => (
@@ -143,7 +143,7 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
                 className="w-full rounded-sm transition-all"
                 style={{
                   height: day.count > 0 ? `${Math.max(12, Math.round((day.count / maxDayCount) * 100))}%` : "3px",
-                  background: day.key === todayKey ? "var(--accent-yellow)" : day.count > 0 ? "var(--accent)" : "var(--border)",
+                  background: day.key === todayKey ? "#F59E0B" : day.count > 0 ? "#E11D48" : "rgba(45,42,166,0.15)",
                 }}
               />
             </div>
@@ -154,15 +154,15 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
             <span
               key={day.key}
               className="flex-1 text-center text-[9px] font-medium"
-              style={{ color: day.key === todayKey ? "var(--accent-yellow)" : "var(--text-muted)" }}
+              style={{ color: day.key === todayKey ? "#F59E0B" : "#6B7280" }}
             >
               {day.label}
             </span>
           ))}
         </div>
-        <div className="mt-2 flex justify-between text-[9px] text-[var(--text-muted)]">
+        <div className="mt-2 flex justify-between text-[9px] text-[#6B7280]">
           {days7.map((day) => (
-            <span key={day.key} className="flex-1 text-center tabular-nums" style={{ color: day.count > 0 ? "var(--text-secondary)" : "var(--text-muted)" }}>
+            <span key={day.key} className="flex-1 text-center tabular-nums" style={{ color: day.count > 0 ? "#1F2937" : "#6B7280" }}>
               {day.count}
             </span>
           ))}
@@ -171,24 +171,24 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
 
       {/* 3 — Top Words */}
       {words.length > 0 && (
-        <section className="glass-panel rounded-xl p-4">
+        <section className="rounded-xl bg-white p-4 shadow-[0_2px_12px_rgba(45,42,166,0.08)]">
           <SectionHeader label="Top Words" />
           <div className="space-y-1.5">
             {words.map(({ word, count }) => (
               <div key={word} className="flex items-center gap-2">
-                <span className="w-20 shrink-0 truncate text-[11px] font-semibold capitalize text-[var(--text-secondary)]">
+                <span className="w-20 shrink-0 truncate text-[11px] font-semibold capitalize text-[#1F2937]">
                   {word}
                 </span>
-                <div className="flex-1 overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
+                <div className="flex-1 overflow-hidden rounded-full bg-[rgba(45,42,166,0.1)]">
                   <div
                     className="h-1.5 rounded-full transition-all"
                     style={{
                       width: `${Math.round((count / maxWordCount) * 100)}%`,
-                      background: "var(--accent-yellow)",
+                      background: "#F59E0B",
                     }}
                   />
                 </div>
-                <span className="w-6 shrink-0 text-right text-[10px] tabular-nums text-[var(--text-muted)]">
+                <span className="w-6 shrink-0 text-right text-[10px] tabular-nums text-[#6B7280]">
                   {count}
                 </span>
               </div>
@@ -198,7 +198,7 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
       )}
 
       {/* 4 — Most Shared */}
-      <section className="glass-panel rounded-xl p-4">
+      <section className="rounded-xl bg-white p-4 shadow-[0_2px_12px_rgba(45,42,166,0.08)]">
         <SectionHeader label="Most Shared" />
         <div className="space-y-2">
           {mostShared.length > 0 ? (
@@ -207,33 +207,27 @@ export function SidePanel({ posts }: { posts: NormalizedPost[] }) {
                 key={post.id}
                 post={post}
                 badge={
-                  <span
-                    className="inline-block rounded-sm px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider"
-                    style={{ background: "var(--accent-yellow)", color: "#141414" }}
-                  >
+                  <span className="inline-block rounded-sm bg-[#F59E0B] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-[#1F2937]">
                     ↻ {post.metadata.sharesCount.toLocaleString()} shares
                   </span>
                 }
               />
             ))
           ) : (
-            <p className="text-xs text-[var(--text-muted)]">No reposts in current data.</p>
+            <p className="text-xs text-[#6B7280]">No reposts in current data.</p>
           )}
         </div>
       </section>
 
-      {/* 4 — Highlights */}
+      {/* 5 — Highlights */}
       {longestPost && (
-        <section className="glass-panel rounded-xl p-4">
+        <section className="rounded-xl bg-white p-4 shadow-[0_2px_12px_rgba(45,42,166,0.08)]">
           <SectionHeader label="Highlights" />
-          <p className="mb-2 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Longest Post</p>
+          <p className="mb-2 text-[10px] uppercase tracking-wider text-[#6B7280]">Longest Post</p>
           <MiniPostCard
             post={longestPost}
             badge={
-              <span
-                className="inline-block rounded-sm px-1.5 py-0.5 text-[9px] font-black tabular-nums uppercase tracking-wider"
-                style={{ background: "var(--accent-yellow)", color: "#141414" }}
-              >
+              <span className="inline-block rounded-sm bg-[#F59E0B] px-1.5 py-0.5 text-[9px] font-black tabular-nums uppercase tracking-wider text-[#1F2937]">
                 {longestPost.metadata.characterCount} chars
               </span>
             }

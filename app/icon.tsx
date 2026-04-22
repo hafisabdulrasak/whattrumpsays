@@ -17,13 +17,12 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#141414",
-          color: "#F5F0E0",
+          background: "#2D2AA6",
           borderRadius: 96,
-          border: "20px solid #E8561A",
           fontSize: 176,
           fontWeight: 700,
-          letterSpacing: 10
+          letterSpacing: 8,
+          color: "#F59E0B",
         }}
       >
         WTS

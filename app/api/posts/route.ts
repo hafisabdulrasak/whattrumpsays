@@ -20,10 +20,35 @@ type CachedPost = {
   favouritesCount?: number;
 };
 
+const TOPIC_KEYWORDS: Record<string, string[]> = {
+  Economy: ["economy","jobs","gdp","inflation","market","stock","trade","tariff","tax","budget","deficit","debt","unemployment","recession","business","growth","finance","dollar","interest rates","wall street","fed ","federal reserve"],
+  Immigration: ["immigration","immigrant","border","illegal","migrant","deportation","deport","asylum","ice","customs","mexico","cartel","wall","sanctuary","visa","citizenship"],
+  Media: ["fake news","media","cnn","nbc","abc","msnbc","fox news","press","reporter","journalist","newspaper","lamestream","mainstream","anchor","pundit"],
+  "Foreign Policy": ["china","russia","ukraine","nato","iran","israel","pakistan","india","europe","saudi","japan","korea","taiwan","diplomacy","treaty","sanctions","foreign","middle east","allies"],
+  Rally: ["rally","maga","crowd","speech","join us","come to","see you in","tremendous crowd","save america"],
+  Legal: ["court","judge","trial","verdict","law","legal","case","indictment","charges","witch hunt","prosecution","attorney","appeal","supreme court","lawsuit","constitution","rights","justice"],
+  Election: ["election","vote","voter","ballot","fraud","rigged","results","polls","campaign","democrat","republican","electoral","primary","candidate","2024","2028"],
+};
+
+function deriveTags(text: string): string[] {
+  const lower = text.toLowerCase();
+  return Object.entries(TOPIC_KEYWORDS)
+    .filter(([, keywords]) => keywords.some((kw) => lower.includes(kw)))
+    .map(([topic]) => topic);
+}
+
+function allCapsScore(text: string): number {
+  const words = text.split(/\s+/).filter((w) => w.length > 2 && /[A-Z]/.test(w));
+  if (words.length === 0) return 0;
+  const caps = words.filter((w) => w === w.toUpperCase());
+  return caps.length / words.length;
+}
+
 function toNormalizedPost(item: CachedPost): NormalizedPost {
+  const text = String(item.text ?? "");
   return {
     id: String(item.id),
-    text: String(item.text ?? ""),
+    text,
     createdAt: new Date(item.createdAt).toISOString(),
     source: "truth_social",
     sourceLabel: "Truth Social",
@@ -31,11 +56,11 @@ function toNormalizedPost(item: CachedPost): NormalizedPost {
     authorName: item.authorName ?? "Donald J. Trump",
     authorHandle: item.authorHandle ?? "@realDonaldTrump",
     media: Array.isArray(item.media) ? item.media : [],
-    tags: [],
+    tags: deriveTags(text),
     isArchive: false,
     metadata: {
-      allCapsScore: 0,
-      characterCount: String(item.text ?? "").length,
+      allCapsScore: allCapsScore(text),
+      characterCount: text.length,
       sharesCount: item.sharesCount ?? 0,
       favouritesCount: item.favouritesCount ?? 0,
     }

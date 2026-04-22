@@ -17,13 +17,12 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#141414",
-          color: "#F5F0E0",
+          background: "#2D2AA6",
           borderRadius: 36,
-          border: "8px solid #E8561A",
           fontSize: 60,
           fontWeight: 700,
-          letterSpacing: 2
+          letterSpacing: 2,
+          color: "#F59E0B",
         }}
       >
         WTS

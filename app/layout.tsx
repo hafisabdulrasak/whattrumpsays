@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Anton, Oswald } from "next/font/google";
 import "@/app/globals.css";
 import { Header } from "@/components/Header";
 import { ReadingProgress } from "@/components/ReadingProgress";
@@ -8,8 +8,9 @@ import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 import { Footer } from "@/components/Footer";
 import { absoluteUrl, jsonLd, siteConfig } from "@/lib/seo";
 
-const body = Inter({ subsets: ["latin"], variable: "--font-body" });
-const display = Playfair_Display({ subsets: ["latin"], variable: "--font-display" });
+const body    = Inter({ subsets: ["latin"], variable: "--font-body" });
+const display = Anton({ subsets: ["latin"], weight: "400", variable: "--font-display" });
+const heading = Oswald({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-heading" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -64,23 +65,9 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#141414" },
-    { media: "(prefers-color-scheme: light)", color: "#F5F0E0" }
-  ]
+  themeColor: "#2D2AA6",
 };
 
-const themeInitScript = `
-(() => {
-  const key = "wts-theme";
-  const root = document.documentElement;
-  const stored = localStorage.getItem(key);
-  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const choice = stored === "light" || stored === "dark" ? stored : (systemDark ? "dark" : "light");
-  root.classList.remove("light", "dark");
-  root.classList.add(choice);
-})();
-`;
 
 const webSiteSchema = {
   "@context": "https://schema.org",
@@ -107,9 +94,8 @@ const organizationSchema = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${body.variable} ${display.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${body.variable} ${display.variable} ${heading.variable}`}>
       <body className="font-sans text-[var(--text-primary)] antialiased">
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(webSiteSchema)} />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(organizationSchema)} />
         <ServiceWorkerRegistrar />
