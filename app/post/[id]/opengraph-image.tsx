@@ -125,7 +125,7 @@ export default async function PostOgImage({ params }: Props) {
             marginBottom: "8px",
             display: "flex",
           }}>
-            "
+            &ldquo;
           </span>
 
           {/* Post text */}
